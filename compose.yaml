@@ -1,14 +1,16 @@
 services:
 
   php-fpm:
-    image: php:8.2.6-fpm
-    container_name: php-fpm
+    build:
+      context: .
+      dockerfile: ./container-conf/dniwa-php-fpm/Dockerfile
+    container_name: dniwa-php-fpm
     volumes:
       - ./app/:/usr/share/nginx/html
 
   nginx:
     image: nginx:1.25.3-alpine
-    container_name: nginx
+    container_name: dniwa-nginx
     ports:
       - 8080:80
     volumes:
@@ -17,7 +19,7 @@ services:
 
   mariadb:
     image: mariadb:11.1.2
-    container_name: mariadb
+    container_name: dniwa-mariadb
     volumes:
       - vol-mariadb:/var/lib/mysql
     environment:
