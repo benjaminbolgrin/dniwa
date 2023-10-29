@@ -6,16 +6,21 @@ services:
       dockerfile: ./container-conf/dniwa-php-fpm/Dockerfile
     container_name: dniwa-php-fpm
     volumes:
-      - ./app/:/usr/share/nginx/html
+      - ./app/resources/views:/var/www/html/resources/views
+      - ./app/app:/var/www/html/app
+      - ./app/tests:/var/www/html/tests
+      - ./app/routes:/var/www/html/routes
+      - ./app/config:/var/www/html/config
 
   nginx:
-    image: nginx:1.25.3-alpine
+    build:
+      context: .
+      dockerfile: ./container-conf/dniwa-nginx/Dockerfile
     container_name: dniwa-nginx
     ports:
       - 8080:80
     volumes:
-      - ./container-conf/nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./app/:/usr/share/nginx/html
+      - ./app/:/var/www/html/public/pages
 
   mariadb:
     image: mariadb:11.1.2
