@@ -11,6 +11,7 @@ services:
       - ./app/tests:/var/www/html/tests
       - ./app/routes:/var/www/html/routes
       - ./app/config:/var/www/html/config
+      - ./app/.env:/var/www/html/.env
 
   nginx:
     build:
@@ -19,8 +20,6 @@ services:
     container_name: dniwa-nginx
     ports:
       - 8080:80
-    volumes:
-      - ./app/:/var/www/html/public/pages
 
   mariadb:
     image: mariadb:11.1.2
