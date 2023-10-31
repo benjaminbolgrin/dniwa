@@ -1,0 +1,36 @@
+services:
+
+  php-fpm:
+    build:
+      context: .
+      dockerfile: ./container-conf/dniwa-php-fpm/Dockerfile
+    container_name: dniwa-php-fpm
+    volumes:
+      - ./app/resources/views:/var/www/html/resources/views
+      - ./app/app:/var/www/html/app
+      - ./app/tests:/var/www/html/tests
+      - ./app/routes:/var/www/html/routes
+      - ./app/config:/var/www/html/config
+      - ./app/.env:/var/www/html/.env
+
+  nginx:
+    build:
+      context: .
+      dockerfile: ./container-conf/dniwa-nginx/Dockerfile
+    container_name: dniwa-nginx
+    ports:
+      - 8080:80
+
+  mariadb:
+    image: mariadb:11.1.2
+    container_name: dniwa-mariadb
+    volumes:
+      - vol-mariadb:/var/lib/mysql
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: 1
+      MYSQL_DATABASE: dniwa
+      MYSQL_USER: dniwauser
+      MYSQL_PASSWORD: secret
+
+volumes:
+  vol-mariadb:
