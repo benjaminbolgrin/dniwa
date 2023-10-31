@@ -9,5 +9,6 @@ RUN apk update && apk add curl \
 			php-tokenizer \
 			php-xmlwriter \
 			php-fileinfo && \
+			docker-php-ext-install mysqli pdo pdo_mysql && \
 			composer create-project laravel/laravel .
 CMD ["docker-php-entrypoint", "php-fpm"]
