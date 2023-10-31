@@ -16,10 +16,12 @@ This container stores Laravel's files at /var/www/html/.
 This container holds the project's SQL database.
 
 ## Start up
-To start the development infrastructure run the following command from the project's root directory as a priviliged user.
+To start the development infrastructure, run the following command from the project's root directory as a priviliged user:
+
 **docker compose up** or **docker compose up --detach**
 
 ## Database migrations
 Database migrations need to be performed by the 'dniwa-php-fpm' container.
-As a privileged user, you can run the following command to make migrations.
+As a privileged user, you can run the following command to make migrations:
+
 **docker exec dniwa-php-fpm php artisan migrate**
