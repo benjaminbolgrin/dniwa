@@ -6,7 +6,7 @@ services:
       dockerfile: ./container-conf/dniwa-php-fpm/Dockerfile
     container_name: dniwa-php-fpm
     volumes:
-      - ./app/resources/views:/var/www/html/resources/views
+      - ./app/resources:/var/www/html/resources
       - ./app/app:/var/www/html/app
       - ./app/tests:/var/www/html/tests
       - ./app/routes:/var/www/html/routes
