@@ -9,6 +9,7 @@ services:
       - ./app/resources:/var/www/html/resources
       - ./app/app:/var/www/html/app
       - ./app/tests:/var/www/html/tests
+      - ./app/database:/var/www/html/database
       - ./app/routes:/var/www/html/routes
       - ./app/config:/var/www/html/config
       - ./app/.env:/var/www/html/.env
