@@ -37,7 +37,7 @@
 					<x-input-error :messages="$errors->get('password_confirmation')" class="form-text" />
 				</div>
 				<x-primary-button class="btn btn-primary">
-					{{ __('Register') }}
+					{{ __('Sign up') }}
 				</x-primary-button>
 			</form>
 		</div>
