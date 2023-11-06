@@ -9,7 +9,8 @@
 	<x-bootstrap/>
     </head>
     <body>
-	<div class="container-fluid">
+	<x-dniwa-navbar/>
+	<div class="container-fluid mt-5">
                 {{ $slot }}
         </div>
     </body>
