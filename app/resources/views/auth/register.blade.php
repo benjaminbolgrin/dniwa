@@ -1,7 +1,7 @@
 <x-guest-layout>
 	<div class="row"> 	
 		<div class="col"></div>
-		<div class="col py-4 bg-light">
+		<div class="col py-4 bg-light border">
 			<h1 class="mb-5">Sign up</h1>
 			<form method="POST" action="{{ route('register') }}">
 				@csrf
