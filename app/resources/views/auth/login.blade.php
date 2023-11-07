@@ -10,21 +10,21 @@
 				@csrf
 
 				<!-- Email Address -->
-				<div class="mb-3">
+				<div class="form-group mb-3">
 					<x-input-label for="email" :value="__('Email')" class="form-label"/>
 					<x-text-input id="email" class="form-control" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
 					<x-input-error :messages="$errors->get('email')" class="form-text" />
 				</div>
 
 				<!-- Password -->
-				<div class="mb-3">
+				<div class="form-group mb-3">
             				<x-input-label for="password" :value="__('Password')" class="form-label" />
 					<x-text-input id="password" class="form-control" type="password" name="password" required autocomplete="current-password" />
 					<x-input-error :messages="$errors->get('password')" class="form-text" />
 				</div>
 
 				<!-- Remember Me -->
-				<div class="mb-3">
+				<div class="form-group mb-3">
 					<label for="remember_me" class="form-label">
 					<input id="remember_me" type="checkbox" class="form-check-input" name="remember">
 					<span>{{ __('Remember me') }}</span>
