@@ -1,4 +1,5 @@
 <x-guest-layout>
+	@section('pagetitle', 'Sign in - DNIWA')
 	<div class="row">
 		<div class="col"></div>
 		<div class="col py-4 bg-light border">
