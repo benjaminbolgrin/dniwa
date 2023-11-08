@@ -2,7 +2,7 @@
 	@section('pagetitle', 'Sign in - DNIWA')
 	<div class="row">
 		<div class="col"></div>
-		<div class="col py-4 bg-light border">
+		<div class="col py-4 bg-secondary-subtle border border-secondary-subtle">
 			<h1 class="mb-5">Sign in</h1>
 			<!-- Session Status -->
 			<x-auth-session-status class="mb-4" :status="session('status')" />
@@ -33,7 +33,7 @@
 				</div>
 
 
-				<x-primary-button class="btn btn-primary">
+				<x-primary-button class="btn btn-outline-info">
 					{{ __('Sign in') }}
 				</x-primary-button>
 			</form>
