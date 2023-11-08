@@ -1,5 +1,38 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light mb-5">
-  <div class="container-md">
-    <a class="navbar-brand" href="/">DNIWA</a>
-  </div>
+<nav class="navbar navbar-expand-lg bg-secondary-subtle mb-5">
+	<div class="container-md">
+		<a class="navbar-brand" href="/">DNIWA</a>
+		<div class="d-flex justify-content-end">
+			<script>
+				function switchText(){
+					var theme = document.querySelector("html").getAttribute("data-bs-theme");
+					
+					if(theme=="dark"){
+						theme="light";
+					}else if(theme=="light"){
+						theme="dark";
+					}
+					document.getElementById("color-switch").innerHTML=theme+" mode";
+				}
+				
+
+				function toggleTheme(){
+					
+					var theme = document.querySelector("html").getAttribute("data-bs-theme");
+					
+					if(theme == "light"){
+						theme = "dark";
+					}
+					else if(theme == "dark"){
+						theme = "light";
+					}
+
+					document.querySelector("html").setAttribute("data-bs-theme", theme);
+					switchText();
+				}
+	
+			</script>
+			<button class="btn btn-primary" onclick="toggleTheme()" id="color-switch">switch color mode</button>
+			<script>switchText();</script>
+		</div>
+	</div>
 </nav>
