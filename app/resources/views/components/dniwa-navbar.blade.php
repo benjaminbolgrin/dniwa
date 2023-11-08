@@ -27,9 +27,9 @@
 					}
 
 					document.querySelector("html").setAttribute("data-bs-theme", theme);
+					localStorage.setItem("theme", theme);
 					switchText();
 				}
-	
 			</script>
 			<button class="btn btn-primary" onclick="toggleTheme()" id="color-switch">switch color mode</button>
 			<script>switchText();</script>

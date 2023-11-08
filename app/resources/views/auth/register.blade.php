@@ -2,7 +2,7 @@
 	@section('pagetitle', 'Sign up - DNIWA')
 	<div class="row"> 	
 		<div class="col"></div>
-		<div class="col py-4 border">
+		<div class="col py-4 bg-secondary-subtle border border-secondary-subtle">
 			<h1 class="mb-5">Sign up</h1>
 			<form method="POST" action="{{ route('register') }}">
 				@csrf

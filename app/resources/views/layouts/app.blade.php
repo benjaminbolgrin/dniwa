@@ -6,6 +6,13 @@
 		<meta name="csrf-token" content="{{ csrf_token() }}">
 		<title>@yield('pagetitle', config('app.name'))</title>
 		<x-bootstrap/>
+		<script>
+			var localTheme = localStorage.getItem("theme");
+					
+			if(localTheme != null && (localTheme == "dark" || localTheme == "light")){
+				document.querySelector("html").setAttribute("data-bs-theme", localTheme);
+			}
+		</script>
 	</head>
 	<body class="bg-light-subtle">
 		<x-dniwa-navbar/>
