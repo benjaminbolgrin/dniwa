@@ -1,17 +1,26 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
-    </x-slot>
-
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    {{ __("You're logged in!") }}
-                </div>
-            </div>
-        </div>
-    </div>
+	<x-slot name="header">
+		<h2>
+			{{ __('Dashboard') }}
+		</h2>
+	</x-slot>
+	<div class="d-flex flex-row-reverse">
+		<div class="p-2">
+			<span class="text text-primary">
+				<a href="{{ route('preferences')}}">{{__('Preferences')}}</a>
+			</span>
+		</div>
+		<div class="p-2">
+			<span class="text text-secondary-subtle">
+				|
+			</span>
+		</div>
+		<div class="p-2">
+			<span class="text text-primary">
+				<a href="{{ route('profile.edit')}}">{{__('Account')}}</a> 
+			</span>
+			
+		</div>
+	</div>
+	<hr class="mt-0"/>
 </x-app-layout>
