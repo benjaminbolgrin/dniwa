@@ -14,6 +14,13 @@ return new class extends Migration
         Schema::create('user_settings', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+	    $table->foreignIdFor(User::class)
+		  ->onUpdate('cascade')
+		  ->onDelete('cascade')
+		  ->unique()
+	          ->constrained();
+	    $table->string('theme', 10)
+	          ->default('light');
         });
     }
 
