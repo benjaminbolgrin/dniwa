@@ -18,7 +18,7 @@
 			@method('patch')
 	
 		<div class="form-group row">
-			<x-input-label for="name" :value="__('Name')" class="col-sm-1 col-form-label"/>
+			<x-input-label for="name" :value="__('Name')" class="col-sm-2 col-form-label"/>
 			<div class="col-sm-4">
 			<x-text-input id="name" name="name" type="text" class="form-control" :value="old('name', $user->name)" required autofocus autocomplete="name" />
 			<x-input-error class="form-text" :messages="$errors->get('name')" />
@@ -26,7 +26,7 @@
 		</div>
 
 		<div class="form-group row mt-2">
-			<x-input-label for="email" :value="__('Email')" class="col-sm-1 col-form-label"/>
+			<x-input-label for="email" :value="__('Email')" class="col-sm-2 col-form-label"/>
 			<div class="col-sm-4">
 			<x-text-input id="email" name="email" type="email" class="form-control" :value="old('email', $user->email)" required autocomplete="username" />
 			<x-input-error class="form-text" :messages="$errors->get('email')" />
