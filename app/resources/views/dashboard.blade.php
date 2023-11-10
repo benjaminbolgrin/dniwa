@@ -1,3 +1,4 @@
+@section('pagetitle', 'Dashboard - DNIWA')
 <x-app-layout>
 	<x-slot name="header">
 		<div class="d-flex align-content-end">
