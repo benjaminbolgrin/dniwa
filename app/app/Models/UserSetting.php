@@ -11,5 +11,5 @@ class UserSetting extends Model
     protected $attributes = [
 
 	    'theme' => 'light'
-    ]
+    ];
 }

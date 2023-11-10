@@ -9,7 +9,7 @@
 			</div>
 			<div class="align-self-end p-1" style="margin-left:auto;">
 				<span class="text text-primary">
-					<a href="{{ route('preferences')}}">{{__('Preferences')}}</a>
+					<a href="{{ route('preferences.edit')}}">{{__('Preferences')}}</a>
 				</span>
 			</div>
 			<div class="align-self-end p-1">
