@@ -2,7 +2,8 @@
 	@section('pagetitle', 'Sign up - DNIWA')
 	<div class="row"> 	
 		<div class="col"></div>
-		<div class="col py-4 bg-secondary-subtle border border-secondary-subtle">
+		<div class="col">
+		<div class="p-4 bg-secondary-subtle border border-secondary-subtle">
 			<h1 class="mb-5">Sign up</h1>
 			<form method="POST" action="{{ route('register') }}">
 				@csrf
@@ -41,6 +42,12 @@
 					{{ __('Sign up') }}
 				</x-primary-button>
 			</form>
+		</div>
+		<span class="text text-primary">
+			<a href="{{route('login')}}">
+				{{ __('Already have an account? Sign in!') }}
+			</a>
+		</span>
 		</div>
 		<div class="col"></div>
 	</div>
