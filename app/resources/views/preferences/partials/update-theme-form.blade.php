@@ -8,7 +8,7 @@
 				{{ __("Set your preferred DNIWA theme.") }}
 			</p>
 		</header>
-		<form method="post" action="{{ route('preferences.update') }}" class="">
+		<form method="post" action="{{ route('preferences.update') }}" id="form-theme">
 			@csrf
 			@method('patch')
 	
@@ -35,6 +35,14 @@
 				</p>
 				@endif
 			</div>
+		<script>
+			var form = document.getElementById("form-theme");
+			var themeRadioButtons = document.getElementsByName("theme");
+			function addListeners(val){
+				val.addEventListener("click", function() {form.submit()});
+			}
+			themeRadioButtons.forEach(addListeners);
+		</script>
 		</form>
 	</div>
 </section>
