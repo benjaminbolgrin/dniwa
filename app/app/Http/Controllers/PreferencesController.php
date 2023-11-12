@@ -35,7 +35,7 @@ class PreferencesController extends Controller
 
 	$userSetting = UserSetting::where('user_id', $userId)->first();
 	
-	if($userSetting->user_id != $userId){
+	if(is_null($userSetting)){
 		$userSetting = new UserSetting;
 		$userSetting->user_id = $userId;
 	}
