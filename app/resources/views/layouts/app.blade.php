@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 @auth
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-bs-theme="{{$userPreferences->theme}}">
+	@if (!is_null($userPreferences))
+		<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-bs-theme="{{$userPreferences->theme}}">
+	@else
+		<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-bs-theme="light">
+	@endif
 @endauth
 @guest
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-bs-theme="light">

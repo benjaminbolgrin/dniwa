@@ -13,12 +13,20 @@
 			@method('patch')
 	
 			<div class="form-check form-check-inline">
-			  <input class="form-check-input" type="radio" name="theme" id="inlineRadio1" value="light" @if ($userSetting->theme == 'light') checked @endif > 
-			  <label class="form-check-label" for="inlineRadio1">Light</label>
+				@if (!is_null($userSetting))
+					<input class="form-check-input" type="radio" name="theme" id="inlineRadio1" value="light" @if ($userSetting->theme == 'light') checked @endif > 
+				@else
+					<input class="form-check-input" type="radio" name="theme" id="inlineRadio1" value="light" checked> 
+				@endif
+			<label class="form-check-label" for="inlineRadio1">Light</label>
 			</div>
 			<div class="form-check form-check-inline">
-			  <input class="form-check-input" type="radio" name="theme" id="inlineRadio2" value="dark" @if ($userSetting->theme == 'dark') checked @endif >
-			  <label class="form-check-label" for="inlineRadio2">Dark</label>
+				@if (!is_null($userSetting))
+					<input class="form-check-input" type="radio" name="theme" id="inlineRadio2" value="dark" @if ($userSetting->theme == 'dark') checked @endif > 
+				@else
+					<input class="form-check-input" type="radio" name="theme" id="inlineRadio2" value="light" checked> 
+				@endif
+				<label class="form-check-label" for="inlineRadio2">Dark</label>
 			</div>
 
 			<div class="mt-4">
