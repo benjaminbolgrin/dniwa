@@ -12,4 +12,8 @@ class UserSetting extends Model
 
 	    'theme' => 'light'
     ];
+
+    protected $fillable = [
+	    'user_id'
+    ];
 }
