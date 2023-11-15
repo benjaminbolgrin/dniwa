@@ -12,9 +12,11 @@ return new class extends Migration{
 	{
 		Schema::create('user_domains', function (Blueprint $table) {
 			$table->id();
-			$table->foreignId('ud_user_id')->constrained(table: 'users', indexName: 'id')->onDelete('cascade');
-			$table->foreignId('ud_domain_id')->contrained(table: 'domains', indexName: 'id')->onDelete('cascade');
+			$table->unsignedBigInteger('user_id');
+			$table->unsignedBigInteger('domain_id');
 			$table->timestamps();
+			$table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
+			$table->foreign('domain_id')->references('id')->on('domains')->cascadeOnDelete();
 		});
 	}
 
