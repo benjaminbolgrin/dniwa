@@ -12,10 +12,11 @@ return new class extends Migration{
 	{
 		Schema::create('dns_records', function (Blueprint $table) {
 			$table->id();
-			$table->foreignId('dr_domain_id')->constrained(table: 'domains', indexName: 'id')->onDelete('cascade');
+			$table->unsignedBigInteger('domain_id');
 			$table->string('type', 5);
 			$table->string('content');
 			$table->timestamps();
+			$table->foreign('domain_id')->references('id')->on('domains')->cascadeOnDelete();
 		});
 	}
 
