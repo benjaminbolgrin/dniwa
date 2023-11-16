@@ -9,4 +9,5 @@ class UserDomain extends Model
 {
     use HasFactory;
     protected $table = 'user_domains';
+    protected $fillable = ['user_id', 'domain_id'];
 }
