@@ -24,5 +24,8 @@
 			</div>
 		</div>
 		<hr class="mt-0"/>
+		<div class="d-flex">
+			<a href="{{route('hostname.add')}}">Add a hostname</a>
+		</div>
 	</x-slot>
 </x-app-layout>

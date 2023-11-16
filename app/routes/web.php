@@ -2,8 +2,8 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PreferencesController;
+use App\Http\Controllers\HostnameController;
 use Illuminate\Support\Facades\Route;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -24,6 +24,8 @@ Route::middleware('auth', 'userPreferences')->group(function () {
 	})->name('dashboard');
 	Route::get('/preferences', [PreferencesController::class, 'edit'])->name('preferences.edit');
 	Route::patch('/preferences', [PreferencesController::class, 'update'])->name('preferences.update');
+	Route::get('/hostname', [HostnameController::class, 'add'])->name('hostname.add');
+	Route::put('/hostname', [HostnameController::class, 'store'])->name('hostname.store');
 });
 
 require __DIR__.'/auth.php';
