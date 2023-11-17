@@ -15,7 +15,7 @@ class StoreHostnameRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'hostname' => 'required|max:253'
+            'hostname' => 'required|url'
         ];
     }
 }
