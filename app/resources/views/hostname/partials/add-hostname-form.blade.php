@@ -1,24 +1,21 @@
 <section>
+	@if (session('status')==='hostname-added')
+	<div class="alert alert-success">Added domain: <span class="text text-success-emphasis"><strong>{{session('domain')}}</strong></span></div>
+	@endif
 	<div class="p-2 mb-4 bg-secondary-subtle border border-secondary-subtle">
 		<header>
+			<h3 class="mb-4">
+				Enter URL (e.g. http://www.example.org)
+			</h3>
 		</header>
 		<form method="post" action="{{ route('hostname.store') }}" id="form-theme">
 			@csrf
 			@method('put')
-			@if (session('status')==='hostname-invalid')
-				<p>
-					<span class="text text-danger">The provided domain name is malformed.</span>
-				</p> 
-			@endif
-			@if (session('status')==='hostname-added')
-				<p>
-					<span class="text text-success">Domain name '{{session('domain')}}' added to your list.</span>
-				</p> 
-			@endif
 			<div class="form-group row">
-					<label for="hostname" class="col-sm-1 col-form-label">Hostname</label>
+					<label for="hostname" class="col-sm-1 col-form-label">URL</label>
 					<div class="col-sm-11">
 						<input type="text" class="form-control" id="hostname" name="hostname" value="{{ old('hostname', '') }}"> 
+						<x-input-error class="text text-danger" :messages="$errors->get('hostname')" />
 					</div>
 			</div>
 			<div class="mt-4">
