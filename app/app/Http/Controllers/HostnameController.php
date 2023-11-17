@@ -25,18 +25,26 @@ class HostnameController extends Controller
 			$hostname = "http://".$hostname;
 		}
 
-		$parsedHostname = parse_url($hostname, PHP_URL_HOST);
+		# Have to encode with the idn_to_ascii method once,
+		# though it will return an incorrect result, when the protocol prefix exists.
+		# We need the protocol prefix for the filter_var method to work correctly
+		$asciiDomain = idn_to_ascii($hostname);
 
-		if($parsedHostname){
-			$asciiHostname = idn_to_ascii($parsedHostname);
-			if($asciiHostname){
-				$domain = Domain::firstOrCreate(['domain_name_ascii' => $asciiHostname]);
-				$domainId = $domain->id;
-				$userId = $request->user()->id;
-				$userDomain = UserDomain::firstOrCreate(['user_id' => $userId, 'domain_id' => $domainId]);
-				return Redirect::route('hostname.add')->with('status', 'hostname-added');
+		if(filter_var($asciiDomain, FILTER_VALIDATE_URL)){
+			# Now we have to to use the parse_url method on the url, to strip it of any protocol prefix
+			$parsedHostname = parse_url($hostname, PHP_URL_HOST);
+
+			if($parsedHostname){
+				$asciiHostname = idn_to_ascii($parsedHostname);
+				if($asciiHostname){
+					$domain = Domain::firstOrCreate(['domain_name_ascii' => $asciiHostname]);
+					$domainId = $domain->id;
+					$userId = $request->user()->id;
+					$userDomain = UserDomain::firstOrCreate(['user_id' => $userId, 'domain_id' => $domainId]);
+					return redirect()->back()->with(['status' => 'hostname-added', 'domain' => $hostname]);
+				}
 			}
 		}
-		return Redirect::route('hostname.add')->with('status', 'hostname-invalid');
+		return redirect()->back()->withInput()->with('status', 'hostname-invalid');
 	}
 }
