@@ -9,6 +9,18 @@
 			</div>
 			<div class="align-self-end p-1" style="margin-left:auto;">
 				<span class="text text-primary">
+					<a href="{{ route('hostname.add') }}">
+						{{ __('Add domain') }}
+					</a>
+				</span>
+			</div>
+			<div class="align-self-end p-1">
+				<span class="text text-secondary">
+					&#124;
+				</span>
+			</div>
+			<div class="align-self-end p-1">
+				<span class="text text-primary">
 					<a href="{{ route('preferences.edit')}}">{{__('Preferences')}}</a>
 				</span>
 			</div>
@@ -24,8 +36,6 @@
 			</div>
 		</div>
 		<hr class="mt-0"/>
-		<div class="d-flex">
-			<a href="{{route('hostname.add')}}">Add a hostname</a>
-		</div>
 	</x-slot>
+	<x-list-domains :domains="$domains"/>
 </x-app-layout>
