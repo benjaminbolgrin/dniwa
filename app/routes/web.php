@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PreferencesController;
 use App\Http\Controllers\HostnameController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
@@ -19,9 +20,7 @@ Route::middleware('auth', 'userPreferences')->group(function () {
 	Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
 	Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 	Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-	Route::get('/', function () {
-		return view('dashboard');
-	})->name('dashboard');
+	Route::get('/', [DashboardController::class, 'listDomains'])->name('dashboard');
 	Route::get('/preferences', [PreferencesController::class, 'edit'])->name('preferences.edit');
 	Route::patch('/preferences', [PreferencesController::class, 'update'])->name('preferences.update');
 	Route::get('/hostname', [HostnameController::class, 'add'])->name('hostname.add');
