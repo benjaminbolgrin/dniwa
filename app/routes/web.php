@@ -23,6 +23,7 @@ Route::middleware('auth', 'userPreferences')->group(function () {
 	Route::get('/', [DashboardController::class, 'listDomains'])->name('dashboard');
 	Route::get('/preferences', [PreferencesController::class, 'edit'])->name('preferences.edit');
 	Route::patch('/preferences', [PreferencesController::class, 'update'])->name('preferences.update');
+	Route::get('/hostname/{domain_id}', [HostnameController::class, 'show'])->name('hostname.show');
 	Route::get('/hostname', [HostnameController::class, 'add'])->name('hostname.add');
 	Route::put('/hostname', [HostnameController::class, 'store'])->name('hostname.store');
 });
