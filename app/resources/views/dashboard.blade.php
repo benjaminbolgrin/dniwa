@@ -37,5 +37,10 @@
 		</div>
 		<hr class="mt-0"/>
 	</x-slot>
+	@if (session('status') === 'domain-deleted')
+		<div class="alert alert-info" role="alert">
+			{{ __('Domain \''.session('deletedDomain').'\' has been deleted from your list!') }}
+		</div>
+	@endif
 	<x-list-domains :domains="$domains"/>
 </x-app-layout>
