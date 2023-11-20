@@ -1,4 +1,7 @@
 <section>
+	@if (session('status')==='preferences-updated')
+	<div class="alert alert-success">{{ __('Preferences saved!') }}</div>
+	@endif
 	<div class="p-2 mb-4 bg-secondary-subtle border border-secondary-subtle">
 		<header>
 			<h3 class="">
@@ -31,17 +34,6 @@
 
 			<div class="mt-4">
 				<x-primary-button>{{ __('Save') }}</x-primary-button>
-				@if (session('status') === 'preferences-updated')
-				<p
-					x-data="{ show: true }"
-					x-show="show"
-					x-transition
-					x-init="setTimeout(() => show = false, 2000)"
-					class="text-sm text-gray-600"
-				>
-					{{ __('Saved.') }}
-				</p>
-				@endif
 			</div>
 		<script>
 			var form = document.getElementById("form-theme");
