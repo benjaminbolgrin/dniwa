@@ -1,14 +1,19 @@
-<div class="d-flex p-4 justify-content-center">
+<div class="d-flex pt-4 pb-4">
 	<h3>
 		Domain list
 	</h3>
 </div>
 @if (isset($domains))
-	<div class="list-group text-center">
-		@foreach ($domains as $domain)
-			<a href=/hostname/{{ $domain['id'] }} class="list-group-item list-group-item-action">
-				{{ $domain['name'] }}
-			</a>
-		@endforeach
-	</div>
+	@foreach ($domains as $domain)
+		<div class="btn-group d-flex mb-2" role="group">
+			<div class="btn-group w-100" role="group">
+				<a href=/hostname/{{ $domain['id'] }} class="btn btn-outline-primary w-75">
+					{{ $domain['name'] }}
+				</a>
+				<button type="submit" class="btn btn-outline-danger w-25">
+					{{ __('Delete') }}
+				</button>
+			</div>
+		</div>
+	@endforeach
 @endif
