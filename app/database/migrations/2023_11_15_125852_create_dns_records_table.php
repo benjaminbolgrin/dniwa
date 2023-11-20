@@ -16,6 +16,7 @@ return new class extends Migration{
 			$table->string('type', 5);
 			$table->string('content');
 			$table->timestamps();
+			$table->index(['domain_id', 'type', 'content']);
 			$table->foreign('domain_id')->references('id')->on('domains')->cascadeOnDelete();
 		});
 	}
