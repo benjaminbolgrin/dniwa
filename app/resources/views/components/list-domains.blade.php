@@ -3,11 +3,12 @@
 		Domain list
 	</h3>
 </div>
-<div class="d-flex justify-content-center flex-wrap wrap">
-	@foreach ($domains as $domain)
-		<span class="p-2">
-			<a href=/hostname/{{ $domain['id'] }}>{{ $domain['name'] }}</a>
-		</span>
-	@endforeach
-</div>
-
+@if (isset($domains))
+	<div class="list-group text-center">
+		@foreach ($domains as $domain)
+			<a href=/hostname/{{ $domain['id'] }} class="list-group-item list-group-item-action">
+				{{ $domain['name'] }}
+			</a>
+		@endforeach
+	</div>
+@endif
