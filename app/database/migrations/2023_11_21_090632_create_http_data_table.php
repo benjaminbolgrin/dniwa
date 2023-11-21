@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('http_data', function (Blueprint $table) {
             $table->id();
 	    $table->timestamps();
-	    $table->unsignedBigInteger('domain_id');
+	    $table->unsignedBigInteger('domain_id')->unique();
 	    $table->foreign('domain_id')->references('id')->on('domains')->cascadeOnDelete();
 	    $table->decimal('response_code', $precision = 3, $scale = 0);
 	    $table->string('header');

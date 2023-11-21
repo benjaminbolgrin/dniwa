@@ -10,13 +10,41 @@ use Illuminate\View\View;
 use App\Models\Domain;
 use App\Models\UserDomain;
 use App\Models\DNSRecord;
+use App\Models\HttpData;
 use App\Http\Requests\StoreHostnameRequest;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
+use DOMDocument;
 
 class HostnameController extends Controller
 {
 
 	public function show(Request $request, Domain $domain): View{
+		
+		function fetchHttpCache(Domain $domain): HttpData{
+			$httpCache = HttpData::where('domain_id', $domain->id)->first();
+			return $httpCache;
+		}
+
+		function fetchHttp(Domain $domain){
+
+			$response = Http::get('http://'.$domain->domain_name_ascii);
+			
+			# suppress DomDocument exceptions
+			libxml_use_internal_errors(true);
+			
+			# retrieve html elements
+			$domDoc = new DOMDocument();
+			$domDoc->loadHTML($response->body());
+			$title = $domDoc->getElementsByTagName('title')[0]->textContent;
+			
+			# persist HttpData
+			$httpData = HttpData::updateOrCreate(['domain_id' => $domain->id], ['response_code' => $response->status(), 'header' => $response->header('Content-Type'), 'title' => $title]);
+			
+			# update updated_at field
+			$httpData->touch();
+		}
 
 		# check, if domain is on user's domain list
 		if(!UserDomain::where('user_id', $request->user()->id)->where('domain_id', $domain->id)->exists()){
@@ -33,38 +61,48 @@ class HostnameController extends Controller
 			$dnsATemp = DNSRecord::where('domain_id', $domain->id)->where('type', 'A')->first();
 
 			# check, if the dns records are not older than 15 minutes
-			if($dnsATemp->updated_at->gt($dateTime15)){
-				$dnsA = DNSRecord::where('domain_id', $domain->id)->where('type', 'A')->get();
-				$dnsMX = DNSRecord::where('domain_id', $domain->id)->where('type', 'MX')->get();
-				return view('hostname.show')->with('dnsA', $dnsA)->with('dnsMX', $dnsMX)->with('domainName', idn_to_utf8($domain->domain_name_ascii));
-			}else{
+			if($dnsATemp->updated_at->lt($dateTime15)){
 				# delete cached records
 				DNSRecord::where('domain_id', $domain->id)->where('type', 'A')->delete();
 				DNSRecord::where('domain_id', $domain->id)->where('type', 'MX')->delete();
+				# fetch dns records
+				$fetchDNSA = dns_get_record($domain->domain_name_ascii, DNS_A);
+				$fetchDNSMX = dns_get_record($domain->domain_name_ascii, DNS_MX);
+
+				# cache dns records
+				foreach($fetchDNSA as $dnsRecord){
+					$aRecord = DNSRecord::updateOrCreate(['domain_id' => $domain->id, 'type' => 'A', 'content' => $dnsRecord['ip']]);
+				}
+
+				foreach($fetchDNSMX as $dnsRecord){
+					$mxRecord = DNSRecord::updateOrCreate(['domain_id' => $domain->id, 'type' => 'MX', 'content' => $dnsRecord['target']]);
+				}
 			}
-		}
-
-		# fetch dns records
-		$fetchDNSA = dns_get_record($domain->domain_name_ascii, DNS_A);
-		$fetchDNSMX = dns_get_record($domain->domain_name_ascii, DNS_MX);
-
-		# cache dns records
-		foreach($fetchDNSA as $dnsRecord){
-			$aRecord = DNSRecord::firstOrNew(['domain_id' => $domain->id, 'type' => 'A', 'content' => $dnsRecord['ip']]);
-			$aRecord->save();
-		}
-
-		foreach($fetchDNSMX as $dnsRecord){
-			$mxRecord = DNSRecord::firstOrNew(['domain_id' => $domain->id, 'type' => 'MX', 'content' => $dnsRecord['target']]);
-			$mxRecord->save();
 		}
 
 		# fetch cached dns records
 		$dnsA = DNSRecord::where('domain_id', $domain->id)->where('type', 'A')->get();
 		$dnsMX = DNSRecord::where('domain_id', $domain->id)->where('type', 'MX')->get();
 
+		# check if there is cached http data for the domain
+		if(HttpData::where('domain_id', $domain->id)->exists()){
+			# check if the cached data is not older than 15 minutes
+			$dateTime15 = Carbon::now()->subMinutes(15);
+			$httpDataTemp = HttpData::where('domain_id', $domain->id)->first();
+			if($httpDataTemp->updated_at->lt($dateTime15)){
+				# make a http request
+				fetchHttp($domain);
+			}
+		}else{
+			# make a http request
+			fetchHttp($domain);
+		}
+
+		# fetch data from http cache
+		$httpData = fetchHttpCache($domain);
+
 		# render view
-		return view('hostname.show')->with('dnsA', $dnsA)->with('dnsMX', $dnsMX)->with('domainName', idn_to_utf8($domain->domain_name_ascii));
+		return view('hostname.show')->with('dnsA', $dnsA)->with('dnsMX', $dnsMX)->with('domainName', idn_to_utf8($domain->domain_name_ascii))->with('httpData', $httpData);
 	}
 
 	public function add(Request $request): View{
