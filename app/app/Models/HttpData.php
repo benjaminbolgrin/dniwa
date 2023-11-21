@@ -9,5 +9,6 @@ class HttpData extends Model
 {
     use HasFactory;
     protected $table = 'http_data';
-    protected $fillable = ['response_code', 'header', 'title'];
+    protected $attributes = ['title' => ''];
+    protected $fillable = ['domain_id', 'response_code', 'header', 'title', 'updated_at'];
 }
