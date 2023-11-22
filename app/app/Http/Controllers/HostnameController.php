@@ -22,50 +22,39 @@ class HostnameController extends Controller
 
 	public function show(Request $request, Domain $domain): View{
 		
-		function fetchHttpCache(Domain $domain): HttpData{
+		function getHttpCache(Domain $domain): HttpData|null{
 			$httpCache = HttpData::where('domain_id', $domain->id)->first();
 			return $httpCache;
 		}
 
-		function fetchHttp(Domain $domain){
-
-			$response = Http::get('http://'.$domain->domain_name_ascii);
-			
-			# suppress DomDocument exceptions
-			libxml_use_internal_errors(true);
-			
-			# retrieve html elements
-			$domDoc = new DOMDocument();
-			$domDoc->loadHTML($response->body());
-			$title = $domDoc->getElementsByTagName('title')[0]->textContent;
-			
-			# persist HttpData
-			$httpData = HttpData::updateOrCreate(['domain_id' => $domain->id], ['response_code' => $response->status(), 'header' => $response->header('Content-Type'), 'title' => $title]);
-			
-			# update updated_at field
-			$httpData->touch();
+		function updateHttp(Domain $domain){
+			try{
+				$response = Http::timeout(2)->get('http://'.$domain->domain_name_ascii);
+				
+				if(!is_null($response->header('Content-Type')) && preg_match('/(text\/html|application\/xhtml\+xml).*/', $response->header('Content-Type'))){		
+					# suppress DomDocument exceptions
+					libxml_use_internal_errors(true);
+					
+					# retrieve html elements
+					$domDoc = new DOMDocument();
+					$domDoc->loadHTML($response->body());
+					$title = $domDoc->getElementsByTagName('title')[0]->textContent;
+					
+					# persist HttpData
+					$httpData = HttpData::updateOrCreate(['domain_id' => $domain->id], ['response_code' => $response->status(), 'header' => $response->header('Content-Type'), 'title' => $title]);
+					
+					# update updated_at field
+					$httpData->touch();
+				}
+			}
+			catch(\Exception $e){
+				report($e);
+				return false;
+			}
 		}
 
-		# check, if domain is on user's domain list
-		if(!UserDomain::where('user_id', $request->user()->id)->where('domain_id', $domain->id)->exists()){
-			abort(404);
-		}
-
-		$dnsA = [];
-		$dnsMX = [];
-
-		# check, if there are recent dns records for the domain
-		if(DNSRecord::where('domain_id', $domain->id)->exists()){
-
-			$dateTime15 = Carbon::now()->subMinutes(15);
-			$dnsATemp = DNSRecord::where('domain_id', $domain->id)->where('type', 'A')->first();
-
-			# check, if the dns records are not older than 15 minutes
-			if($dnsATemp->updated_at->lt($dateTime15)){
-				# delete cached records
-				DNSRecord::where('domain_id', $domain->id)->where('type', 'A')->delete();
-				DNSRecord::where('domain_id', $domain->id)->where('type', 'MX')->delete();
-				# fetch dns records
+		function updateDNSRecords(Domain $domain){
+			try{
 				$fetchDNSA = dns_get_record($domain->domain_name_ascii, DNS_A);
 				$fetchDNSMX = dns_get_record($domain->domain_name_ascii, DNS_MX);
 
@@ -77,6 +66,37 @@ class HostnameController extends Controller
 				foreach($fetchDNSMX as $dnsRecord){
 					$mxRecord = DNSRecord::updateOrCreate(['domain_id' => $domain->id, 'type' => 'MX', 'content' => $dnsRecord['target']]);
 				}
+
+			}catch(\Exception $e){
+				report($e);
+				return false;
+			}
+		}
+
+		# check, if domain is on user's domain list
+		if(!UserDomain::where('user_id', $request->user()->id)->where('domain_id', $domain->id)->exists()){
+			abort(404);
+		}
+
+		$dnsA = [];
+		$dnsMX = [];
+
+		# check, if there are recent dns records for the domain
+		if(!DNSRecord::where('domain_id', $domain->id)->exists()){
+			
+			# fetch dns records
+			updateDNSRecords($domain);
+		}else{
+			# check, if the dns records are not older than 15 minutes
+			$dateTime15 = Carbon::now()->subMinutes(15);
+			$dnsATemp = DNSRecord::where('domain_id', $domain->id)->where('type', 'A')->first();
+
+			if($dnsATemp->updated_at->lt($dateTime15)){
+				# delete cached records
+				DNSRecord::where('domain_id', $domain->id)->where('type', 'A')->delete();
+				DNSRecord::where('domain_id', $domain->id)->where('type', 'MX')->delete();
+				# update dns records
+				updateDNSRecords($domain);
 			}
 		}
 
@@ -91,15 +111,15 @@ class HostnameController extends Controller
 			$httpDataTemp = HttpData::where('domain_id', $domain->id)->first();
 			if($httpDataTemp->updated_at->lt($dateTime15)){
 				# make a http request
-				fetchHttp($domain);
+				updateHttp($domain);
 			}
 		}else{
 			# make a http request
-			fetchHttp($domain);
+			updateHttp($domain);
 		}
 
 		# fetch data from http cache
-		$httpData = fetchHttpCache($domain);
+		$httpData = getHttpCache($domain);
 
 		# render view
 		return view('hostname.show')->with('dnsA', $dnsA)->with('dnsMX', $dnsMX)->with('domainName', idn_to_utf8($domain->domain_name_ascii))->with('httpData', $httpData);
