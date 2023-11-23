@@ -11,6 +11,7 @@ use App\Models\Domain;
 use App\Models\UserDomain;
 use App\Models\DNSRecord;
 use App\Models\HttpData;
+use App\Models\HtmlMetaData;
 use App\Http\Requests\StoreHostnameRequest;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
@@ -29,7 +30,7 @@ class HostnameController extends Controller
 
 		function updateHttp(Domain $domain){
 			try{
-				$response = Http::timeout(2)->get('http://'.$domain->domain_name_ascii);
+				$response = Http::timeout(15)->get('http://'.$domain->domain_name_ascii);
 				
 				if(!is_null($response->header('Content-Type')) && preg_match('/(text\/html|application\/xhtml\+xml).*/', $response->header('Content-Type'))){		
 					# suppress DomDocument exceptions
@@ -45,6 +46,45 @@ class HostnameController extends Controller
 					
 					# update updated_at field
 					$httpData->touch();
+					
+					# html meta data
+					HtmlMetaData::where('http_data_id', $httpData->id)->delete();
+
+					$metaData = $domDoc->getElementsByTagName('meta');
+					foreach($metaData as $meta){
+						$name = '';
+						$charset = '';
+						$httpEquiv = '';
+						$content = '';
+						$property = '';
+						if($meta->hasAttributes()){
+							foreach($meta->attributes as $attribute){
+								switch($attribute->nodeName){
+									case 'name':
+										$name = $attribute->nodeValue;
+										break;
+									case 'charset':
+										$charset = $attribute->nodeValue;
+										break;
+									case 'content':
+										$content = $attribute->nodeValue;
+										break;
+									case 'http-equiv':
+										$httpEquiv = $attribute->nodeValue;
+										break;
+									case 'property':
+										$property = $attribute->nodeValue;
+										break;
+								}
+							}
+						}
+						HtmlMetaData::updateOrCreate(['http_data_id' => $httpData->id, 
+							'meta_name' => $name, 
+							'meta_charset' => $charset, 
+							'meta_http_equiv' => $httpEquiv, 
+							'meta_content' => $content, 
+							'meta_property' => $property]);
+					}
 				}
 			}
 			catch(\Exception $e){
@@ -95,7 +135,7 @@ class HostnameController extends Controller
 			updateDNSRecords($domain);
 		}else{
 			# check, if the dns records are not older than 15 minutes
-			$dateTime15 = Carbon::now()->subMinutes(1);
+			$dateTime15 = Carbon::now()->subMinutes(15);
 			$dnsATemp = DNSRecord::where('domain_id', $domain->id)->where('type', 'A')->first();
 
 			if($dnsATemp->updated_at->lt($dateTime15)){
