@@ -57,15 +57,22 @@ class HostnameController extends Controller
 			try{
 				$fetchDNSA = dns_get_record($domain->domain_name_ascii, DNS_A);
 				$fetchDNSMX = dns_get_record($domain->domain_name_ascii, DNS_MX);
+				$fetchDNSAWWW = dns_get_record('www.'.$domain->domain_name_ascii, DNS_A);
 
 				# cache dns records
 				foreach($fetchDNSA as $dnsRecord){
-					$aRecord = DNSRecord::updateOrCreate(['domain_id' => $domain->id, 'type' => 'A', 'content' => $dnsRecord['ip']]);
+					DNSRecord::updateOrCreate(['domain_id' => $domain->id, 'type' => 'A', 'content' => $dnsRecord['ip'], 'hostname' => $dnsRecord['host']]);
+				}
+				if($fetchDNSAWWW){
+					foreach($fetchDNSAWWW as $dnsRecord){
+						DNSRecord::updateOrCreate(['domain_id' => $domain->id, 'type' => 'A', 'content' => $dnsRecord['ip'], 'hostname' => $dnsRecord['host']]);
+					}
 				}
 
 				foreach($fetchDNSMX as $dnsRecord){
-					$mxRecord = DNSRecord::updateOrCreate(['domain_id' => $domain->id, 'type' => 'MX', 'content' => $dnsRecord['target']]);
+					DNSRecord::updateOrCreate(['domain_id' => $domain->id, 'type' => 'MX', 'content' => $dnsRecord['target'], 'hostname' => $dnsRecord['host']]);
 				}
+		
 
 			}catch(\Exception $e){
 				report($e);
@@ -88,7 +95,7 @@ class HostnameController extends Controller
 			updateDNSRecords($domain);
 		}else{
 			# check, if the dns records are not older than 15 minutes
-			$dateTime15 = Carbon::now()->subMinutes(15);
+			$dateTime15 = Carbon::now()->subMinutes(1);
 			$dnsATemp = DNSRecord::where('domain_id', $domain->id)->where('type', 'A')->first();
 
 			if($dnsATemp->updated_at->lt($dateTime15)){

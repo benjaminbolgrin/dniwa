@@ -9,5 +9,5 @@ class DNSRecord extends Model
 {
     use HasFactory;
     protected $table = 'dns_records';
-    protected $fillable = ['domain_id', 'type', 'content'];
+    protected $fillable = ['domain_id', 'type', 'content', 'hostname'];
 }

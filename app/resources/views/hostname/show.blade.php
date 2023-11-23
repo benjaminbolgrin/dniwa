@@ -15,7 +15,7 @@
 		<table class="table table-striped text-center mt-5">
 			<thead>
 				<tr>
-					<th scope="col">
+					<th colspan="2" scope="col">
 						{{ __('A records') }}
 					</th>
 				</tr>
@@ -23,7 +23,10 @@
 			<tbody>
 				@foreach ($dnsA as $record)
 				<tr>
-					<td>
+					<td class="w-50 pe-3 text-end">
+						{{$record->hostname}}
+					</td>
+					<td class="ps-3 text-start">
 						{{$record->content}}
 					</td>
 				</tr>
@@ -62,26 +65,26 @@
 			</thead>
 			<tbody>
 				<tr>
-					<th scope="row" class="w-50">
+					<th scope="row" class="w-50 pe-3 text-end">
 						{{ __('Response code: ') }}
 					</td>
-					<td class="text-left">
+					<td class="text-right ps-3 text-start">
 						{{ $httpData->response_code }}
 					</td>
 				</tr>
 				<tr>
-					<th scope="row" class="w-50">
+					<th scope="row" class="w-50 pe-3 text-end">
 						{{ __('Content-Type: ') }}
 					</td>
-					<td class="text-left">
+					<td class="ps-3 text-start">
 						{{ $httpData->header }}
 					</td>
 				</tr>
 				<tr>
-					<th scope="row" class="w-50">
+					<th scope="row" class="w-50 pe-3 text-end">
 						{{ __('Title: ') }}
 					</td>
-					<td>
+					<td class="ps-3 text-start">
 						{{ $httpData->title }}
 					</td>
 				</tr>
