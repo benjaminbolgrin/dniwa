@@ -30,7 +30,7 @@ class HostnameController extends Controller
 
 		function getHtmlCache(Domain $domain): \Illuminate\Database\Eloquent\Collection|null{
 			$httpId = HttpData::where('domain_id', $domain->id)->first()->id;
-			$htmlCache = HtmlMetaData::where('http_data_id', $httpId)->get();
+			$htmlCache = HtmlMetaData::where('http_data_id', $httpId)->orderBy('meta_name')->get();
 			return $htmlCache;
 		}
 

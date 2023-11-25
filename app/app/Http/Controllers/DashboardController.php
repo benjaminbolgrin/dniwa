@@ -28,7 +28,7 @@ class DashboardController extends Controller
 	}
 
 	public function listDomains(Request $request): View{
-		$domains = DB::table('user_domains')->leftJoin('domains', 'user_domains.domain_id', '=', 'domains.id')->where('user_domains.user_id', $request->user()->id)->get();
+		$domains = DB::table('user_domains')->leftJoin('domains', 'user_domains.domain_id', '=', 'domains.id')->where('user_domains.user_id', $request->user()->id)->orderBy('domain_name_ascii')->get();
 		$domainNames = array();
 		foreach($domains as $domain){
 			$domainArray = ['id' => $domain->domain_id,
