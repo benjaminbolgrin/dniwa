@@ -28,6 +28,12 @@ class HostnameController extends Controller
 			return $httpCache;
 		}
 
+		function getHtmlCache(Domain $domain): \Illuminate\Database\Eloquent\Collection|null{
+			$httpId = HttpData::where('domain_id', $domain->id)->first()->id;
+			$htmlCache = HtmlMetaData::where('http_data_id', $httpId)->get();
+			return $htmlCache;
+		}
+
 		function updateHttp(Domain $domain){
 			try{
 				$response = Http::timeout(15)->get('http://'.$domain->domain_name_ascii);
@@ -174,9 +180,12 @@ class HostnameController extends Controller
 
 		# fetch data from http cache
 		$httpData = getHttpCache($domain);
+		
+		# fetch data from html cache
+		$htmlData = getHtmlCache($domain);
 
 		# render view
-		return view('hostname.show')->with('dnsA', $dnsA)->with('dnsMX', $dnsMX)->with('domainName', idn_to_utf8($domain->domain_name_ascii))->with('httpData', $httpData);
+		return view('hostname.show')->with('dnsA', $dnsA)->with('dnsMX', $dnsMX)->with('domainName', idn_to_utf8($domain->domain_name_ascii))->with('httpData', $httpData)->with('htmlData', $htmlData);
 	}
 
 	public function add(Request $request): View{
