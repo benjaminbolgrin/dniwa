@@ -39,7 +39,7 @@ class HostnameController extends Controller
 					# retrieve html elements
 					$domDoc = new DOMDocument();
 					$domDoc->loadHTML($response->body());
-					$title = $domDoc->getElementsByTagName('title')[0]->textContent;
+					$title = htmlspecialchars($domDoc->getElementsByTagName('title')[0]->textContent);
 					
 					# persist HttpData
 					$httpData = HttpData::updateOrCreate(['domain_id' => $domain->id], ['response_code' => $response->status(), 'header' => $response->header('Content-Type'), 'title' => $title]);
@@ -61,19 +61,19 @@ class HostnameController extends Controller
 							foreach($meta->attributes as $attribute){
 								switch($attribute->nodeName){
 									case 'name':
-										$name = $attribute->nodeValue;
+										$name = htmlspecialchars($attribute->nodeValue);
 										break;
 									case 'charset':
-										$charset = $attribute->nodeValue;
+										$charset = htmlspecialchars($attribute->nodeValue);
 										break;
 									case 'content':
-										$content = $attribute->nodeValue;
+										$content = htmlspecialchars($attribute->nodeValue);
 										break;
 									case 'http-equiv':
-										$httpEquiv = $attribute->nodeValue;
+										$httpEquiv = htmlspecialchars($attribute->nodeValue);
 										break;
 									case 'property':
-										$property = $attribute->nodeValue;
+										$property = htmlspecialchars($attribute->nodeValue);
 										break;
 								}
 							}
@@ -101,16 +101,16 @@ class HostnameController extends Controller
 
 				# cache dns records
 				foreach($fetchDNSA as $dnsRecord){
-					DNSRecord::updateOrCreate(['domain_id' => $domain->id, 'type' => 'A', 'content' => $dnsRecord['ip'], 'hostname' => $dnsRecord['host']]);
+					DNSRecord::updateOrCreate(['domain_id' => $domain->id, 'type' => 'A', 'content' => htmlspecialchars($dnsRecord['ip']), 'hostname' => htmlspecialchars($dnsRecord['host'])]);
 				}
 				if($fetchDNSAWWW){
 					foreach($fetchDNSAWWW as $dnsRecord){
-						DNSRecord::updateOrCreate(['domain_id' => $domain->id, 'type' => 'A', 'content' => $dnsRecord['ip'], 'hostname' => $dnsRecord['host']]);
+						DNSRecord::updateOrCreate(['domain_id' => $domain->id, 'type' => 'A', 'content' => htmlspecialchars($dnsRecord['ip']), 'hostname' => htmlspecialchars($dnsRecord['host'])]);
 					}
 				}
 
 				foreach($fetchDNSMX as $dnsRecord){
-					DNSRecord::updateOrCreate(['domain_id' => $domain->id, 'type' => 'MX', 'content' => $dnsRecord['target'], 'hostname' => $dnsRecord['host']]);
+					DNSRecord::updateOrCreate(['domain_id' => $domain->id, 'type' => 'MX', 'content' => htmlspecialchars($dnsRecord['target']), 'hostname' => htmlspecialchars($dnsRecord['host'])]);
 				}
 		
 
