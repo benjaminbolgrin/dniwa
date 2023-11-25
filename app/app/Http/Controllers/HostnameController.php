@@ -28,15 +28,12 @@ class HostnameController extends Controller
 			return $httpCache;
 		}
 
-<<<<<<< HEAD
-=======
 		function getHtmlCache(Domain $domain): \Illuminate\Database\Eloquent\Collection|null{
 			$httpId = HttpData::where('domain_id', $domain->id)->first()->id;
 			$htmlCache = HtmlMetaData::where('http_data_id', $httpId)->orderBy('meta_name')->get();
 			return $htmlCache;
 		}
 
->>>>>>> fetch-http-data
 		function updateHttp(Domain $domain){
 			try{
 				$response = Http::timeout(15)->get('http://'.$domain->domain_name_ascii);
@@ -48,11 +45,7 @@ class HostnameController extends Controller
 					# retrieve html elements
 					$domDoc = new DOMDocument();
 					$domDoc->loadHTML($response->body());
-<<<<<<< HEAD
-					$title = $domDoc->getElementsByTagName('title')[0]->textContent;
-=======
 					$title = htmlspecialchars($domDoc->getElementsByTagName('title')[0]->textContent);
->>>>>>> fetch-http-data
 					
 					# persist HttpData
 					$httpData = HttpData::updateOrCreate(['domain_id' => $domain->id], ['response_code' => $response->status(), 'header' => $response->header('Content-Type'), 'title' => $title]);
