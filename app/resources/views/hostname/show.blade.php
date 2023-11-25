@@ -92,4 +92,7 @@
 			</tbody>
 		</table>
 	@endif
+	@if (isset($htmlData))
+		@include('hostname.partials.show-html-meta-data')	
+	@endif
 </x-app-layout>

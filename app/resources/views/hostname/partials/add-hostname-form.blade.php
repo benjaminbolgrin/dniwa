@@ -14,7 +14,7 @@
 			<div class="form-group row">
 					<label for="hostname" class="col-sm-1 col-form-label">URL</label>
 					<div class="col-sm-11">
-						<input type="text" class="form-control" id="hostname" name="hostname" value="{{ old('hostname', '') }}"> 
+						<input type="text" autofocus="autofocus" class="form-control" id="hostname" name="hostname" value="{{ old('hostname', '') }}"> 
 						<x-input-error class="text text-danger" :messages="$errors->get('hostname')" />
 					</div>
 			</div>

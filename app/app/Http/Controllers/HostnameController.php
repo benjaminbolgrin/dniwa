@@ -28,6 +28,15 @@ class HostnameController extends Controller
 			return $httpCache;
 		}
 
+<<<<<<< HEAD
+=======
+		function getHtmlCache(Domain $domain): \Illuminate\Database\Eloquent\Collection|null{
+			$httpId = HttpData::where('domain_id', $domain->id)->first()->id;
+			$htmlCache = HtmlMetaData::where('http_data_id', $httpId)->orderBy('meta_name')->get();
+			return $htmlCache;
+		}
+
+>>>>>>> fetch-http-data
 		function updateHttp(Domain $domain){
 			try{
 				$response = Http::timeout(15)->get('http://'.$domain->domain_name_ascii);
@@ -39,7 +48,11 @@ class HostnameController extends Controller
 					# retrieve html elements
 					$domDoc = new DOMDocument();
 					$domDoc->loadHTML($response->body());
+<<<<<<< HEAD
 					$title = $domDoc->getElementsByTagName('title')[0]->textContent;
+=======
+					$title = htmlspecialchars($domDoc->getElementsByTagName('title')[0]->textContent);
+>>>>>>> fetch-http-data
 					
 					# persist HttpData
 					$httpData = HttpData::updateOrCreate(['domain_id' => $domain->id], ['response_code' => $response->status(), 'header' => $response->header('Content-Type'), 'title' => $title]);
@@ -57,33 +70,40 @@ class HostnameController extends Controller
 						$httpEquiv = '';
 						$content = '';
 						$property = '';
+						$itemprop = '';
 						if($meta->hasAttributes()){
 							foreach($meta->attributes as $attribute){
 								switch($attribute->nodeName){
 									case 'name':
-										$name = $attribute->nodeValue;
+										$name = htmlspecialchars($attribute->nodeValue);
 										break;
 									case 'charset':
-										$charset = $attribute->nodeValue;
+										$charset = htmlspecialchars($attribute->nodeValue);
 										break;
 									case 'content':
-										$content = $attribute->nodeValue;
+										$content = htmlspecialchars($attribute->nodeValue);
 										break;
 									case 'http-equiv':
-										$httpEquiv = $attribute->nodeValue;
+										$httpEquiv = htmlspecialchars($attribute->nodeValue);
 										break;
 									case 'property':
-										$property = $attribute->nodeValue;
+										$property = htmlspecialchars($attribute->nodeValue);
+										break;
+									case 'itemprop':
+										$itemprop = htmlspecialchars($attribute->nodeValue);
 										break;
 								}
 							}
 						}
+						if($name != '' || $charset != '' || $httpEquiv != '' || $property != '' || $itemprop != ''){
 						HtmlMetaData::updateOrCreate(['http_data_id' => $httpData->id, 
 							'meta_name' => $name, 
 							'meta_charset' => $charset, 
 							'meta_http_equiv' => $httpEquiv, 
 							'meta_content' => $content, 
-							'meta_property' => $property]);
+							'meta_property' => $property,
+							'meta_itemprop' => $itemprop]);
+						}
 					}
 				}
 			}
@@ -101,16 +121,16 @@ class HostnameController extends Controller
 
 				# cache dns records
 				foreach($fetchDNSA as $dnsRecord){
-					DNSRecord::updateOrCreate(['domain_id' => $domain->id, 'type' => 'A', 'content' => $dnsRecord['ip'], 'hostname' => $dnsRecord['host']]);
+					DNSRecord::updateOrCreate(['domain_id' => $domain->id, 'type' => 'A', 'content' => htmlspecialchars($dnsRecord['ip']), 'hostname' => htmlspecialchars($dnsRecord['host'])]);
 				}
 				if($fetchDNSAWWW){
 					foreach($fetchDNSAWWW as $dnsRecord){
-						DNSRecord::updateOrCreate(['domain_id' => $domain->id, 'type' => 'A', 'content' => $dnsRecord['ip'], 'hostname' => $dnsRecord['host']]);
+						DNSRecord::updateOrCreate(['domain_id' => $domain->id, 'type' => 'A', 'content' => htmlspecialchars($dnsRecord['ip']), 'hostname' => htmlspecialchars($dnsRecord['host'])]);
 					}
 				}
 
 				foreach($fetchDNSMX as $dnsRecord){
-					DNSRecord::updateOrCreate(['domain_id' => $domain->id, 'type' => 'MX', 'content' => $dnsRecord['target'], 'hostname' => $dnsRecord['host']]);
+					DNSRecord::updateOrCreate(['domain_id' => $domain->id, 'type' => 'MX', 'content' => htmlspecialchars($dnsRecord['target']), 'hostname' => htmlspecialchars($dnsRecord['host'])]);
 				}
 		
 
@@ -167,9 +187,12 @@ class HostnameController extends Controller
 
 		# fetch data from http cache
 		$httpData = getHttpCache($domain);
+		
+		# fetch data from html cache
+		$htmlData = getHtmlCache($domain);
 
 		# render view
-		return view('hostname.show')->with('dnsA', $dnsA)->with('dnsMX', $dnsMX)->with('domainName', idn_to_utf8($domain->domain_name_ascii))->with('httpData', $httpData);
+		return view('hostname.show')->with('dnsA', $dnsA)->with('dnsMX', $dnsMX)->with('domainName', idn_to_utf8($domain->domain_name_ascii))->with('httpData', $httpData)->with('htmlData', $htmlData);
 	}
 
 	public function add(Request $request): View{
@@ -189,7 +212,11 @@ class HostnameController extends Controller
 		# get domain name
 		$domainName = $punycodeHostname;
 		preg_match('/(?P<domainName>[a-z0-9][a-z0-9\-]{1,63}\.[a-z\.]{2,6})$/i', $domainName, $hostnameParts);
-		$domainName = $hostnameParts['domainName'];
+		if(isset($hostnameParts['domainName'])){
+			$domainName = $hostnameParts['domainName'];
+		}else{
+			return Redirect::back()->withErrors(['hostname' => 'The hostname field must be a valid URL.']);
+		}
 
 		# create or retrieve the domain name data from the database
 		$domain = Domain::firstOrCreate(['domain_name_ascii' => $domainName]);

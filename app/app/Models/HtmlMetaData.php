@@ -9,6 +9,6 @@ class HtmlMetaData extends Model
 {
     use HasFactory;
     protected $table = 'html_meta_data';
-    protected $attributes = ['meta_name' => '', 'meta_charset' => '', 'meta_http_equiv' => '', 'meta_content' => '', 'meta_property' => ''];
-    protected $fillable = ['http_data_id', 'meta_name', 'meta_charset', 'meta_http_equiv', 'meta_content', 'meta_property'];
+    protected $attributes = ['meta_name' => '', 'meta_charset' => '', 'meta_http_equiv' => '', 'meta_content' => '', 'meta_property' => '', 'meta_itemprop' => ''];
+    protected $fillable = ['http_data_id', 'meta_name', 'meta_charset', 'meta_http_equiv', 'meta_content', 'meta_property', 'meta_itemprop'];
 }
