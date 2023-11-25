@@ -19,6 +19,7 @@ return new class extends Migration
 	    $table->string('meta_charset');
 	    $table->string('meta_http_equiv');
 	    $table->string('meta_property');
+	    $table->string('meta_itemprop');
 	    $table->timestamps();
 	    $table->foreign('http_data_id')->references('id')->on('http_data')->cascadeOnDelete();
         });

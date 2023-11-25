@@ -57,6 +57,7 @@ class HostnameController extends Controller
 						$httpEquiv = '';
 						$content = '';
 						$property = '';
+						$itemprop = '';
 						if($meta->hasAttributes()){
 							foreach($meta->attributes as $attribute){
 								switch($attribute->nodeName){
@@ -75,15 +76,21 @@ class HostnameController extends Controller
 									case 'property':
 										$property = htmlspecialchars($attribute->nodeValue);
 										break;
+									case 'itemprop':
+										$itemprop = htmlspecialchars($attribute->nodeValue);
+										break;
 								}
 							}
 						}
+						if($name != '' || $charset != '' || $httpEquiv != '' || $property != '' || $itemprop != ''){
 						HtmlMetaData::updateOrCreate(['http_data_id' => $httpData->id, 
 							'meta_name' => $name, 
 							'meta_charset' => $charset, 
 							'meta_http_equiv' => $httpEquiv, 
 							'meta_content' => $content, 
-							'meta_property' => $property]);
+							'meta_property' => $property,
+							'meta_itemprop' => $itemprop]);
+						}
 					}
 				}
 			}
