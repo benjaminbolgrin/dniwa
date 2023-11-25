@@ -205,7 +205,11 @@ class HostnameController extends Controller
 		# get domain name
 		$domainName = $punycodeHostname;
 		preg_match('/(?P<domainName>[a-z0-9][a-z0-9\-]{1,63}\.[a-z\.]{2,6})$/i', $domainName, $hostnameParts);
-		$domainName = $hostnameParts['domainName'];
+		if(isset($hostnameParts['domainName'])){
+			$domainName = $hostnameParts['domainName'];
+		}else{
+			return Redirect::back()->withErrors(['hostname' => 'The hostname field must be a valid URL.']);
+		}
 
 		# create or retrieve the domain name data from the database
 		$domain = Domain::firstOrCreate(['domain_name_ascii' => $domainName]);
