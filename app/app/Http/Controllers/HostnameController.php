@@ -14,178 +14,33 @@ use App\Models\HttpData;
 use App\Models\HtmlMetaData;
 use App\Http\Requests\StoreHostnameRequest;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
-use DOMDocument;
+use App\Traits\DomainInfoTrait;
 
 class HostnameController extends Controller
 {
+	use DomainInfoTrait;
 
 	public function show(Request $request, Domain $domain): View{
-		
-		function getHttpCache(Domain $domain): HttpData|null{
-			$httpCache = HttpData::where('domain_id', $domain->id)->first();
-			return $httpCache;
-		}
 
-		function getHtmlCache(Domain $domain): \Illuminate\Database\Eloquent\Collection|null{
-			$httpId = HttpData::where('domain_id', $domain->id)->first()->id;
-			$htmlCache = HtmlMetaData::where('http_data_id', $httpId)->orderBy('meta_name')->get();
-			return $htmlCache;
-		}
-
-		function updateHttp(Domain $domain){
-			try{
-				$response = Http::timeout(15)->get('http://'.$domain->domain_name_ascii);
-				
-				if(!is_null($response->header('Content-Type')) && preg_match('/(text\/html|application\/xhtml\+xml).*/', $response->header('Content-Type'))){		
-					# suppress DomDocument exceptions
-					libxml_use_internal_errors(true);
-					
-					# retrieve html elements
-					$domDoc = new DOMDocument();
-					$domDoc->loadHTML($response->body());
-					$title = htmlspecialchars($domDoc->getElementsByTagName('title')[0]->textContent);
-					
-					# persist HttpData
-					$httpData = HttpData::updateOrCreate(['domain_id' => $domain->id], ['response_code' => $response->status(), 'header' => $response->header('Content-Type'), 'title' => $title]);
-					
-					# update updated_at field
-					$httpData->touch();
-					
-					# html meta data
-					HtmlMetaData::where('http_data_id', $httpData->id)->delete();
-
-					$metaData = $domDoc->getElementsByTagName('meta');
-					foreach($metaData as $meta){
-						$name = '';
-						$charset = '';
-						$httpEquiv = '';
-						$content = '';
-						$property = '';
-						$itemprop = '';
-						if($meta->hasAttributes()){
-							foreach($meta->attributes as $attribute){
-								switch($attribute->nodeName){
-									case 'name':
-										$name = htmlspecialchars($attribute->nodeValue);
-										break;
-									case 'charset':
-										$charset = htmlspecialchars($attribute->nodeValue);
-										break;
-									case 'content':
-										$content = htmlspecialchars($attribute->nodeValue);
-										break;
-									case 'http-equiv':
-										$httpEquiv = htmlspecialchars($attribute->nodeValue);
-										break;
-									case 'property':
-										$property = htmlspecialchars($attribute->nodeValue);
-										break;
-									case 'itemprop':
-										$itemprop = htmlspecialchars($attribute->nodeValue);
-										break;
-								}
-							}
-						}
-						if($name != '' || $charset != '' || $httpEquiv != '' || $property != '' || $itemprop != ''){
-						HtmlMetaData::updateOrCreate(['http_data_id' => $httpData->id, 
-							'meta_name' => $name, 
-							'meta_charset' => $charset, 
-							'meta_http_equiv' => $httpEquiv, 
-							'meta_content' => $content, 
-							'meta_property' => $property,
-							'meta_itemprop' => $itemprop]);
-						}
-					}
-				}
-			}
-			catch(\Exception $e){
-				report($e);
-				return false;
-			}
-		}
-
-		function updateDNSRecords(Domain $domain){
-			try{
-				$fetchDNSA = dns_get_record($domain->domain_name_ascii, DNS_A);
-				$fetchDNSMX = dns_get_record($domain->domain_name_ascii, DNS_MX);
-				$fetchDNSAWWW = dns_get_record('www.'.$domain->domain_name_ascii, DNS_A);
-
-				# cache dns records
-				foreach($fetchDNSA as $dnsRecord){
-					DNSRecord::updateOrCreate(['domain_id' => $domain->id, 'type' => 'A', 'content' => htmlspecialchars($dnsRecord['ip']), 'hostname' => htmlspecialchars($dnsRecord['host'])]);
-				}
-				if($fetchDNSAWWW){
-					foreach($fetchDNSAWWW as $dnsRecord){
-						DNSRecord::updateOrCreate(['domain_id' => $domain->id, 'type' => 'A', 'content' => htmlspecialchars($dnsRecord['ip']), 'hostname' => htmlspecialchars($dnsRecord['host'])]);
-					}
-				}
-
-				foreach($fetchDNSMX as $dnsRecord){
-					DNSRecord::updateOrCreate(['domain_id' => $domain->id, 'type' => 'MX', 'content' => htmlspecialchars($dnsRecord['target']), 'hostname' => htmlspecialchars($dnsRecord['host'])]);
-				}
-		
-
-			}catch(\Exception $e){
-				report($e);
-				return false;
-			}
-		}
-
-		# check, if domain is on user's domain list
-		if(!UserDomain::where('user_id', $request->user()->id)->where('domain_id', $domain->id)->exists()){
-			abort(404);
-		}
-
-		$dnsA = [];
-		$dnsMX = [];
-
-		# check, if there are recent dns records for the domain
-		if(!DNSRecord::where('domain_id', $domain->id)->exists()){
-			
-			# fetch dns records
-			updateDNSRecords($domain);
-		}else{
-			# check, if the dns records are not older than 15 minutes
-			$dateTime15 = Carbon::now()->subMinutes(15);
-			$dnsATemp = DNSRecord::where('domain_id', $domain->id)->where('type', 'A')->first();
-
-			if($dnsATemp->updated_at->lt($dateTime15)){
-				# delete cached records
-				DNSRecord::where('domain_id', $domain->id)->where('type', 'A')->delete();
-				DNSRecord::where('domain_id', $domain->id)->where('type', 'MX')->delete();
-				# update dns records
-				updateDNSRecords($domain);
-			}
-		}
+		$this->domain = $domain;
+		$this->updateOrCreateDomainInformation();
 
 		# fetch cached dns records
 		$dnsA = DNSRecord::where('domain_id', $domain->id)->where('type', 'A')->get();
 		$dnsMX = DNSRecord::where('domain_id', $domain->id)->where('type', 'MX')->get();
 
-		# check if there is cached http data for the domain
-		if(HttpData::where('domain_id', $domain->id)->exists()){
-			# check if the cached data is not older than 15 minutes
-			$dateTime15 = Carbon::now()->subMinutes(15);
-			$httpDataTemp = HttpData::where('domain_id', $domain->id)->first();
-			if($httpDataTemp->updated_at->lt($dateTime15)){
-				# make a http request
-				updateHttp($domain);
-			}
-		}else{
-			# make a http request
-			updateHttp($domain);
-		}
-
 		# fetch data from http cache
-		$httpData = getHttpCache($domain);
+		$httpData = $this->getHttpCache();
 		
 		# fetch data from html cache
-		$htmlData = getHtmlCache($domain);
+		$htmlData = $this->getHtmlCache();
 
 		# render view
-		return view('hostname.show')->with('dnsA', $dnsA)->with('dnsMX', $dnsMX)->with('domainName', idn_to_utf8($domain->domain_name_ascii))->with('httpData', $httpData)->with('htmlData', $htmlData);
+		return view('hostname.show')->with('dnsA', $dnsA)
+			      			->with('dnsMX', $dnsMX)
+						->with('domainName', idn_to_utf8($domain
+						->domain_name_ascii))->with('httpData', $httpData)
+						->with('htmlData', $htmlData);
 	}
 
 	public function add(Request $request): View{
