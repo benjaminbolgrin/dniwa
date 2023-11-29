@@ -1,6 +1,6 @@
 <?php
-namespace App\Traits
-;
+namespace App\Traits;
+
 use App\Models\Domain;
 use App\Models\DNSRecord;
 use App\Models\HttpData;
@@ -15,69 +15,66 @@ Trait DomainInfoTrait{
 	protected $httpRecords;
 	protected $htmlRecords;
 	protected $maxMinutes;
+	protected $domain;
 
 	public function __construct(){
 		$this->dnsRecords = array();
 		$this->httpRecords = array();
 		$this->htmlRecords = array();
 		$this->maxMinutes = 15;
+		$this->domain = new Domain();
 	}
 	
-	public function getHttpCache(): HttpData|null{
+	public function getHttpCache(): HttpData{
 		if(HttpData::where('domain_id', $this->domain->id)->exists()){
 			$httpCache = HttpData::where('domain_id', $this->domain->id)->first();
 		}else{
-			$httpCache = null;
+			$httpCache  = new HttpData();
 		}
 		return $httpCache;
 	}
 
-	public function getHtmlCache(): \Illuminate\Database\Eloquent\Collection|null{
+	public function getHtmlCache(): \Illuminate\Database\Eloquent\Collection{
 		if(HttpData::where('domain_id', $this->domain->id)->exists()){
 			$httpId = HttpData::where('domain_id', $this->domain->id)->first()->id;
 			$htmlCache = HtmlMetaData::where('http_data_id', $httpId)->orderBy('meta_name')->get();
 		}else{
-			$htmlCache = null;
+			$htmlCache = new \Illuminate\Database\Eloquent\Collection();;
 		}
 		return $htmlCache;
 	}
 
 	private function isDnsCacheFresh(): bool{
-		$timeAgo = Carbon::now()->subMinutes($this->maxMinutes);
-		if(!DNSRecord::where('domain_id', $this->domain->id)->exists()){
-			return false;
+		if(DNSRecord::where('domain_id', $this->domain->id)->exists()){
+			$timeAgo = Carbon::now()->subMinutes($this->maxMinutes);
+			if(DNSRecord::where('domain_id', $this->domain->id)->first()->updated_at->gt($timeAgo)){
+				return true;
+			}
 		}
-		if(DNSRecord::where('domain_id', $this->domain->id)->first()->updated_at->lt($timeAgo)){
-			return false;
-		}
-		return true;
-		
+		return false;
 	}
 
 	private function isHttpCacheFresh(): bool{
-		$timeAgo = Carbon::now()->subMinutes($this->maxMinutes);
-		if(!HttpData::where('domain_id', $this->domain->id)->exists()){
-			return false;
+		if(HttpData::where('domain_id', $this->domain->id)->exists()){
+			$timeAgo = Carbon::now()->subMinutes($this->maxMinutes);
+			if(HttpData::where('domain_id', $this->domain->id)->first()->updated_at->gt($timeAgo)){
+				return true;
+			}
 		}
-		if(HttpData::where('domain_id', $this->domain->id)->first()->updated_at->lt($timeAgo)){
-			return false;
-		}
-		return true;
+		return false;
 	}
 
 	private function isHtmlCacheFresh(): bool{
-		if(!HttpData::where('domain_id', $this->domain->id)->exists()){
-			return false;
+		if(HttpData::where('domain_id', $this->domain->id)->exists()){
+			$httpData = HttpData::where('domain_id', $this->domain->id)->first();
+			if(HtmlMetaData::where('http_data_id', $httpData->id)->exists()){
+				$timeAgo = Carbon::now()->subMinutes($this->maxMinutes);
+				if(HtmlMetaData::where('http_data_id', $httpData->id)->first()->updated_at->gt($timeAgo)){
+					return true;
+				}
+			}
 		}
-		$httpData = HttpData::where('domain_id', $this->domain->id)->first();
-		if(!HtmlMetaData::where('http_data_id', $httpData->id)->exists()){
-			return false;
-		}
-		$timeAgo = Carbon::now()->subMinutes($this->maxMinutes);
-		if(HtmlMetaData::where('http_data_id', $httpData->id)->first()->updated_at->lt($timeAgo)){
-			return false;
-		}
-		return true;
+		return false;
 	}
 
 	private function getDnsInformation(): array{
