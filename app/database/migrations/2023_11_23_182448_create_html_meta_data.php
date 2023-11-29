@@ -15,11 +15,11 @@ return new class extends Migration
             $table->id();
 	    $table->unsignedBigInteger('http_data_id');
 	    $table->string('meta_name');
-	    $table->string('meta_content');
+	    $table->text('meta_content');
 	    $table->string('meta_charset');
 	    $table->string('meta_http_equiv');
-	    $table->string('meta_property');
-	    $table->string('meta_itemprop');
+	    $table->text('meta_property');
+	    $table->text('meta_itemprop');
 	    $table->timestamps();
 	    $table->foreign('http_data_id')->references('id')->on('http_data')->cascadeOnDelete();
         });

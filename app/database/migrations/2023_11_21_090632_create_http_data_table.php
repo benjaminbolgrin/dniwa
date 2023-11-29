@@ -17,8 +17,8 @@ return new class extends Migration
 	    $table->unsignedBigInteger('domain_id')->unique();
 	    $table->foreign('domain_id')->references('id')->on('domains')->cascadeOnDelete();
 	    $table->decimal('response_code', $precision = 3, $scale = 0);
-	    $table->string('header');
-	    $table->string('title');
+	    $table->text('header');
+	    $table->text('title');
         });
     }
 
