@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 use App\Models\Domain;
 use App\Models\UserDomain;
@@ -23,6 +24,11 @@ class HostnameController extends Controller
 	public function show(Request $request, Domain $domain): View{
 
 		$this->domain = $domain;
+
+		if(! Gate::allows('view-domain-info', $this->domain)){
+			abort(403);
+		}
+
 		$this->updateOrCreateDomainInformation();
 
 		# fetch cached dns records
