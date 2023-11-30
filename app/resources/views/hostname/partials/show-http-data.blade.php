@@ -3,6 +3,22 @@
 		<tr>
 			<th colspan="2" scope="col">
 				{{ __('Http data') }}
+@if ($httpData->response_code != '') 
+	@php
+		$currenServerTime =  date('Y-m-d H:i:s');
+		$dateTimeHttp = strtotime($httpData->updated_at);
+		$dateTimeCurrent = strtotime($currenServerTime);
+		$timeDifferenceHttp = floor(($dateTimeCurrent - $dateTimeHttp) / 60);
+	@endphp
+				<br/>
+				<span class="text text-muted">
+	@if ($timeDifferenceHttp > 0)
+					{{ __('updated '.$timeDifferenceHttp.' minutes ago') }}
+	@else
+					{{ __('updated recently') }}
+	@endif
+				</span>
+@endif
 			</th>
 		</tr>
 	</thead>
