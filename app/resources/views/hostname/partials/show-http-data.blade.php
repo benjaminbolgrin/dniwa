@@ -5,9 +5,9 @@
 				{{ __('Http data') }}
 @if ($httpData->response_code != '') 
 	@php
-		$currenServerTime =  date('Y-m-d H:i:s');
+		$currentServerTime =  date('Y-m-d H:i:s');
 		$dateTimeHttp = strtotime($httpData->updated_at);
-		$dateTimeCurrent = strtotime($currenServerTime);
+		$dateTimeCurrent = strtotime($currentServerTime);
 		$timeDifferenceHttp = floor(($dateTimeCurrent - $dateTimeHttp) / 60);
 	@endphp
 				<br/>
