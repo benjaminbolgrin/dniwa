@@ -3,6 +3,22 @@
 		<tr>
 			<th scope="col">
 				{{ __('MX records') }}
+@if (count($dnsMX) !=0)
+	@php
+		$currentServerTime =  date('Y-m-d H:i:s');
+		$dateTimeMX = strtotime($dnsMX[0]->updated_at);
+		$dateTimeCurrent = strtotime($currentServerTime);
+		$timeDifferenceMX = floor(($dateTimeCurrent - $dateTimeMX) / 60);
+	@endphp
+				<br />
+				<span class="text text-muted">
+	@if ($timeDifferenceMX > 0)
+					{{ __('updated '.$timeDifferenceMX.' minutes ago') }}
+	@else
+					{{ __('updated recently') }}
+	@endif
+				</span>
+@endif
 			</th>
 		</tr>
 	</thead>
