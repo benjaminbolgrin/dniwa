@@ -13,12 +13,15 @@ services:
       - ./app/routes:/var/www/html/routes
       - ./app/config:/var/www/html/config
       - ./app/.env:/var/www/html/.env
+      - vol-static:/var/www/html/public/static
 
   nginx:
     build:
       context: .
       dockerfile: ./container-conf/dniwa-nginx/Dockerfile
     container_name: dniwa-nginx
+    volumes:
+      - vol-static:/var/www/html/public/static
     ports:
       - 8080:80
 
@@ -35,3 +38,4 @@ services:
 
 volumes:
   vol-mariadb:
+  vol-static:
