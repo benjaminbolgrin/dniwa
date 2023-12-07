@@ -14,6 +14,7 @@ services:
       - ./app/config:/var/www/html/config
       - ./app/.env:/var/www/html/.env
       - vol-static:/var/www/html/public/static
+      - vol-build:/var/www/html/public/build
 
   nginx:
     build:
@@ -22,6 +23,7 @@ services:
     container_name: dniwa-nginx
     volumes:
       - vol-static:/var/www/html/public/static
+      - vol-build:/var/www/html/public/build
     ports:
       - 8080:80
 
@@ -39,3 +41,4 @@ services:
 volumes:
   vol-mariadb:
   vol-static:
+  vol-build:
