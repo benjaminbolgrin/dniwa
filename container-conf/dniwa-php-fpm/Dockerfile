@@ -13,11 +13,11 @@ RUN apk update && apk add curl \
 			docker-php-ext-install mysqli pdo pdo_mysql && \
 			composer create-project laravel/laravel . && \
 			composer require laravel/breeze && \
+			composer require inertiajs/inertia-laravel && \
 			php artisan breeze:install blade && \
 			mkdir -p /var/www/html/public/static && \
 			cd /var/www/html/public/static && \
 			curl -LO 'https://github.com/twbs/bootstrap/releases/download/v5.3.2/bootstrap-5.3.2-dist.zip' && \
 			unzip -q 'bootstrap-5.3.2-dist.zip' && \
-			rm 'bootstrap-5.3.2-dist.zip' && \
-			composer require inertiajs/inertia-laravel
+			rm 'bootstrap-5.3.2-dist.zip'
 CMD ["docker-php-entrypoint", "php-fpm"]
