@@ -15,6 +15,8 @@ services:
       - ./app/.env:/var/www/html/.env
       - vol-static:/var/www/html/public/static
       - vol-build:/var/www/html/public/build
+    networks:
+      - dniwa
 
   nginx:
     build:
@@ -26,6 +28,8 @@ services:
       - vol-build:/var/www/html/public/build
     ports:
       - 8080:80
+    networks:
+      - dniwa
 
   mariadb:
     image: mariadb:11.1.2
@@ -37,6 +41,12 @@ services:
       MYSQL_DATABASE: dniwa
       MYSQL_USER: dniwauser
       MYSQL_PASSWORD: secret
+    networks:
+      - dniwa
+
+networks:
+  dniwa:
+    name: dniwa-network
 
 volumes:
   vol-mariadb:
