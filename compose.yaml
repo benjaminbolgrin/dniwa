@@ -13,6 +13,7 @@ services:
       - ./app/routes:/var/www/html/routes
       - ./app/config:/var/www/html/config
       - ./app/.env:/var/www/html/.env
+      - ./app/vite.config.js:/var/www/html/vite.config.js
       - vol-static:/var/www/html/public/static
       - vol-build:/var/www/html/public/build
     networks:

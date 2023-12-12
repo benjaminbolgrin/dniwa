@@ -15,6 +15,10 @@ RUN apk update && apk add curl \
 			composer require laravel/breeze && \
 			composer require inertiajs/inertia-laravel && \
 			php artisan breeze:install blade && \
+			npm install @inertiajs/inertia @inertiajs/inertia-vue3 vue@next && \
+			npm install -D @vue/compiler-sfc && \
+			npm install --save-dev @vitejs/plugin-vue && \
+			npm install && \
 			mkdir -p /var/www/html/public/static && \
 			cd /var/www/html/public/static && \
 			curl -LO 'https://github.com/twbs/bootstrap/releases/download/v5.3.2/bootstrap-5.3.2-dist.zip' && \
