@@ -1,9 +1,5 @@
 <template>
 	<main>
-		<header>
-			<Link href="/">Home</Link>
-			<Link href="/signin">Signin</Link>
-		</header>
 		<article>
 			<slot />
 		</article>
@@ -13,5 +9,4 @@
 <script setup>
 	import {Link} from '@inertiajs/inertia-vue3'
 
-	defineProps({})
 </script>
