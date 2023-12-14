@@ -1,12 +1,7 @@
 <template>
-	<main>
-		<article>
-			<slot />
-		</article>
-	</main>
+	<slot />
 </template>
 
 <script setup>
 	import {Link} from '@inertiajs/inertia-vue3'
-
 </script>

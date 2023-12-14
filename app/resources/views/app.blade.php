@@ -70,9 +70,7 @@
 		<!-- End navigation bar -->
 
 		<!-- Begin content -->
-		<div class="container-md">
 		@inertia
-		</div>
 		<!-- End content -->
 
 	</body>
