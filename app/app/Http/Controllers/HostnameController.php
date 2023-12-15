@@ -16,12 +16,14 @@ use App\Models\HtmlMetaData;
 use App\Http\Requests\StoreHostnameRequest;
 use Carbon\Carbon;
 use App\Traits\DomainInfoTrait;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class HostnameController extends Controller
 {
 	use DomainInfoTrait;
 
-	public function show(Request $request, Domain $domain): View{
+	public function show(Request $request, Domain $domain): Response{
 
 		$this->domain = $domain;
 
@@ -42,11 +44,13 @@ class HostnameController extends Controller
 		$htmlData = $this->getHtmlCache();
 
 		# render view
-		return view('hostname.show')->with('dnsA', $dnsA)
-			      			->with('dnsMX', $dnsMX)
-						->with('domainName', idn_to_utf8($domain
-						->domain_name_ascii))->with('httpData', $httpData)
-						->with('htmlData', $htmlData);
+		return Inertia::render('DomainInfo', [
+			'dnsA' => $dnsA,
+			'dnsMX' => $dnsMX,
+			'domainName' => idn_to_utf8($domain->domain_name_ascii),
+			'httpData' => $httpData,
+			'htmlData' => $htmlData
+		]);
 	}
 
 	public function add(Request $request): View{
