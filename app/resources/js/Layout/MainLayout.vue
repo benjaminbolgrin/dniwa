@@ -1,5 +1,7 @@
 <template>
-	<slot />
+	<div class="container-md"> 
+		<slot />
+	</div>
 </template>
 
 <script setup>
