@@ -8,6 +8,8 @@ use Illuminate\View\View;
 use App\Models\UserDomain;
 use App\Models\Domain;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class DashboardController extends Controller
 {
@@ -27,7 +29,7 @@ class DashboardController extends Controller
 		return redirect()->back()->with(['status' => 'domain-deleted', 'deletedDomain' => idn_to_utf8($domain->domain_name_ascii)]);
 	}
 
-	public function listDomains(Request $request): View{
+	public function listDomains(Request $request): Response{
 		$domains = DB::table('user_domains')->leftJoin('domains', 'user_domains.domain_id', '=', 'domains.id')->where('user_domains.user_id', $request->user()->id)->orderBy('domain_name_ascii')->get();
 		$domainNames = array();
 		foreach($domains as $domain){
@@ -35,6 +37,6 @@ class DashboardController extends Controller
 					'name' => idn_to_utf8($domain->domain_name_ascii)];
 			array_push($domainNames, $domainArray);
 		}
-		return view('dashboard')->with('domains', $domainNames);
+		return Inertia::render('Dashboard', ['domains' => $domainNames]);
 	}
 }
