@@ -10,18 +10,20 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class PreferencesController extends Controller
 {
     /**
      * Display the user's preferences form.
      */
-    public function edit(Request $request): View
+    public function edit(Request $request): Response
     {
 
 	$userSetting = UserSetting::where('user_id', $request->user()->id)->first();
 	
-	return view('preferences.edit', [
+	return Inertia::render('PreferencesEdit', [
             'userSetting' => $userSetting
         ]);
     }
