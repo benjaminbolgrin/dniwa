@@ -53,8 +53,8 @@ class HostnameController extends Controller
 		]);
 	}
 
-	public function add(Request $request): View{
-		return view('hostname.add');
+	public function add(Request $request): Response{
+		return Inertia::render('DomainAdd');
 	}
 
 	public function store(StoreHostnameRequest $request): RedirectResponse{
