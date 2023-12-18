@@ -21,7 +21,8 @@ let toggleTheme = () => {
 		<div class="container-md">
 			<Link class="navbar-brand" href="/">DNIWA</Link>
 			<div class="d-flex justify-content-end">
-				<button class="btn btn-primary" @click="toggleTheme" id="color-switch" v-text="theme == 'dark' ? 'Light mode' : 'Dark mode'"/>
+				<button v-if="!$page.props.auth.user.username" class="btn btn-primary" @click="toggleTheme" id="color-switch" v-text="theme == 'dark' ? 'Light mode' : 'Dark mode'"/>
+				<Link href="/logout" as="button" v-else-if="$page.props.auth.user.username" class="btn btn-primary"  id="sign-out" v-text="'Sign out'" method="post"/>
 			</div>
 		</div>
 	</nav>
