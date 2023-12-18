@@ -25,3 +25,7 @@ Database migrations need to be performed by the 'dniwa-php-fpm' container.
 As a privileged user, you can run the following command to make migrations:
 
 **docker exec dniwa-php-fpm php artisan migrate**
+
+## Build assets (JS, CSS)
+
+**docker exec dniwa-php-fpm npm run build**
