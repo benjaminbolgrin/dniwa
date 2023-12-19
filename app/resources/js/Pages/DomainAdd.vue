@@ -8,13 +8,20 @@ let headlineMain = ref('Add domain name');
 let headlineSec = ref('Enter URL (e.g. http://www.example.org)');
 let submitButton = ref('Save');
 let inputLabelUrl = ref('URL');
+const addDomainSuccess = ref(false);
+const addedHostname = ref('');
 
-let form = useForm({
+let formAddHostname = useForm({
 	hostname: ''
 });
 
 let submit = () => {
-	form.put('/hostname');
+	formAddHostname.put('/hostname', {
+		onSuccess: () => {
+			addedHostname.value = formAddHostname.hostname;
+			addDomainSuccess.value = true;
+		}
+	});
 };
 </script>
 
@@ -25,6 +32,7 @@ let submit = () => {
 		    {{ headlineMain }}
 		</h2>
 		<hr class="mt-0"/>
+		<div v-if="addDomainSuccess" v-text="addedHostname + ' has been added to your domain list.'" class="alert alert-success"/>
 		<section>
 			<div class="p-2 mb-4 bg-secondary-subtle border border-secondary-subtle">
 				<header>
@@ -36,11 +44,12 @@ let submit = () => {
 					<div class="form-group row">
 						<label for="hostname" class="col-sm-1 col-form-label">{{ inputLabelUrl }}</label>
 						<div class="col-sm-11">
-							<input type="text" autofocus="autofocus" class="form-control" v-model="form.hostname" /> 
-							</div>
+							<input type="text" autofocus="autofocus" class="form-control" v-model="formAddHostname.hostname" /> 
+							<div v-if="formAddHostname.errors.hostname" v-text="formAddHostname.errors.hostname" class="text-danger"/>
+						</div>
 					</div>
 					<div class="mt-4">
-						<button type="submit" class="btn btn-secondary" :disabled="form.processing">{{ submitButton }}</button>
+						<button type="submit" class="btn btn-secondary" :disabled="formAddHostname.processing">{{ submitButton }}</button>
 					</div>
 
 				</form>
