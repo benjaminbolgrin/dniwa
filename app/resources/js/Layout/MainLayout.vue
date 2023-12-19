@@ -1,7 +1,13 @@
 <script setup>
-import {Link} from '@inertiajs/inertia-vue3';
-import {ref} from 'vue';
+import {Link, usePage} from '@inertiajs/inertia-vue3';
+import {ref, onMounted} from 'vue';
+
 const theme = ref(document.querySelector('html').getAttribute('data-bs-theme'));
+
+function setTheme(theme){
+	document.querySelector("html").setAttribute("data-bs-theme", theme);
+}
+
 let toggleTheme = () => {
 	if(theme.value == "light"){
 		theme.value = "dark";
@@ -9,10 +15,18 @@ let toggleTheme = () => {
 	else if(theme.value == "dark"){
 		theme.value = "light";
 	}
-
-	document.querySelector("html").setAttribute("data-bs-theme", theme.value);
+	setTheme(theme.value);
 	localStorage.setItem("theme", theme.value);
 };
+
+onMounted(() => {
+	if(usePage().props.value.auth.user.theme){
+		theme.value = usePage().props.value.auth.user.theme;
+	}else if(localStorage.getItem('theme')){
+		theme.value = localStorage.getItem('theme');
+	}
+	setTheme(theme.value);
+})
 </script>
 
 <template>
@@ -27,7 +41,6 @@ let toggleTheme = () => {
 		</div>
 	</nav>
 	<!-- End navigation bar -->
-
 	<!-- Start content -->
 	<div class="container-md"> 
 		<slot />
