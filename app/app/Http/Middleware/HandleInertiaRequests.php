@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Illuminate\Support\Facades\Auth;
+use App\Models\UserSetting;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -37,10 +38,15 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+	$theme = null;
+	if(Auth::user()){
+		$theme = UserSetting::where('user_id', Auth::user()->id)->first()->theme;
+	}   	
         return array_merge(parent::share($request), [
 		'auth' => [
 			'user' => [
-				'username'=> Auth::user()?->name
+				'username'=> Auth::user()?->name,
+				'theme' => $theme,
 			]
 		]
         ]);
