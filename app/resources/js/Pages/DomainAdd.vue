@@ -20,6 +20,7 @@ let submit = () => {
 		onSuccess: () => {
 			addedHostname.value = formAddHostname.hostname;
 			addDomainSuccess.value = true;
+			formAddHostname.reset();
 		}
 	});
 };
