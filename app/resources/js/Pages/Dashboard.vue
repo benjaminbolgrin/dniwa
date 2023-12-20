@@ -22,26 +22,6 @@ let linkAccount = ref('Account');
 					<Link href="/hostname" v-text="headlineSecondary"/>
 				</span>
 			</div>
-			<div class="align-self-end p-1">
-				<span class="text text-secondary">
-					&#124;
-				</span>
-			</div>
-			<div class="align-self-end p-1">
-				<span class="text text-primary">
-					<Link href="/preferences" v-text="linkPreferences"/>
-				</span>
-			</div>
-			<div class="align-self-end p-1">
-				<span class="text text-secondary">
-					&#124;
-				</span>
-			</div>
-			<div class="align-self-end p-1">
-				<span class="text text-primary">
-					<Link href="/profile" v-text="linkAccount"/>
-				</span>
-			</div>
 		</div>
 		<hr class="mt-0"/>
 		<DniwaDashboardDomains />
