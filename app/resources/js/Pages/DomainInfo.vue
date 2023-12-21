@@ -1,3 +1,12 @@
+<script setup>
+import MainLayout from "@/Layout/MainLayout.vue";
+import DniwaHead from "@/Components/DniwaHead.vue";
+import DniwaDomainInfoA from '@/Components/DniwaDomainInfoA.vue';
+import DniwaDomainInfoMX from '@/Components/DniwaDomainInfoMX.vue';
+import DniwaDomainInfoHttp from '@/Components/DniwaDomainInfoHttp.vue';
+import DniwaDomainInfoHtml from '@/Components/DniwaDomainInfoHtml.vue';
+import { Link } from '@inertiajs/inertia-vue3'; 
+</script>
 <template>
 	<DniwaHead :title="'Domain information for ' + $page.props.domainName" />
 	<MainLayout>
@@ -20,13 +29,3 @@
 		<DniwaDomainInfoHtml />
 	</MainLayout>
 </template>
-
-<script setup>
-	import MainLayout from "@/Layout/MainLayout.vue";
-	import DniwaHead from "@/Components/DniwaHead.vue";
-	import DniwaDomainInfoA from '@/Components/DniwaDomainInfoA.vue';
-	import DniwaDomainInfoMX from '@/Components/DniwaDomainInfoMX.vue';
-	import DniwaDomainInfoHttp from '@/Components/DniwaDomainInfoHttp.vue';
-	import DniwaDomainInfoHtml from '@/Components/DniwaDomainInfoHtml.vue';
-	import { Link } from '@inertiajs/inertia-vue3'; 
-</script>

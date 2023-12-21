@@ -24,8 +24,8 @@
 				</th>
 			</tr>
 		</thead>
-		<tbody v-for="metaData in $page.props.htmlData">
-			<tr>
+		<tbody>
+			<tr v-for="metaData in $page.props.htmlData">
 				<td v-if="metaData.meta_name != ''" class="text-end w-25 pe-3">
 					name
 				</td>
@@ -43,19 +43,19 @@
 				</td>
 				<td v-else class="text-end w-25 pe-3">
 				</td>
-				<td v-if="metaData.meta_name != ''" class="text-end w-25 pe-3">
+				<td v-if="metaData.meta_name != ''" class="text-start w-25 pe-3">
 					{{ metaData.meta_name }}
 				</td>
-				<td v-else-if="metaData.meta_property != ''" class="text-end w-25 pe-3">
+				<td v-else-if="metaData.meta_property != ''" class="text-start w-25 pe-3">
 					{{ metaData.meta_property }}
 				</td>
-				<td v-else-if="metaData.meta_charset != ''" class="text-end w-25 pe-3">
+				<td v-else-if="metaData.meta_charset != ''" class="text-start w-25 pe-3">
 					{{ metaData.meta_charset }}
 				</td>
-				<td v-else-if="metaData.http_equiv != ''" class="text-end w-25 pe-3">
+				<td v-else-if="metaData.http_equiv != ''" class="text-start w-25 pe-3">
 					{{ metaData.meta_http_equiv }}
 				</td>
-				<td v-else-if="metaData.meta_itemprop != ''" class="text-end w-25 pe-3">
+				<td v-else-if="metaData.meta_itemprop != ''" class="text-start w-25 pe-3">
 					{{ metaData.meta_itemprop }}
 				</td>
 				<td v-if="metaData.meta_content != ''" class="text-end w-25 pe-3">

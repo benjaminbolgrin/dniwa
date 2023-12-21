@@ -10,8 +10,8 @@
 				</th>
 			</tr>
 		</thead>
-		<tbody v-for="dnsA in $page.props.dnsA">
-			<tr>
+		<tbody>
+			<tr v-for="dnsA in $page.props.dnsA">
 				<td class="w-50 pe-3 text-end">
 					{{ dnsA.hostname }}
 				</td>
