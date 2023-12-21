@@ -1,6 +1,16 @@
 <script setup>
 import {useForm, Link, usePage} from '@inertiajs/inertia-vue3';
-import { ref, computed } from 'vue';
+import { ref, computed, watch, toRef } from 'vue';
+
+let props = defineProps([
+	'addDomainSuccess',
+	'addedUrl'
+]);
+
+let statusMessage = ref({
+	'type': '',
+	'message': ''
+});
 
 let headlineDomainList = ref('Domain list');
 let submitButton = ref('Delete');
@@ -16,21 +26,31 @@ const deletedDomain = ref('');
 const deleteStatus = ref(false);
 const domainDisabled = ref(false);
 const userDomains = ref(usePage().props.value.domains);
+const copyAddedUrl = toRef(props, 'addedUrl');
 
 const filteredDomains = computed(()=>{
 	return formSearch.searchString !== '' ? userDomains.value.filter((t) => t.name.includes(formSearch.searchString)) : userDomains.value;
 });
 
-let submit = (domainId, domainName) => {
-	if(confirm('Delete '+domainName+' from your domain list?')){
-		formDomainDelete.delete('/'+domainId, {
+function removeDomain(hostname){
+	userDomains.value = userDomains.value.filter((t) => t !== hostname);
+}
+
+let submit = (domain) => {
+	if(confirm('Delete '+domain.name+' from your domain list?')){
+		formDomainDelete.delete('/'+domain.id, {
 			onSuccess: () =>{
-				deletedDomain.value = domainName;
-				deleteStatus.value = true;
+				statusMessage.value = {'type': 'delete', 'message': domain.name + ' has been deleted from your list'}
+				removeDomain(domain);
 			}
 		});
 	}
 };
+
+watch(copyAddedUrl, () => {
+	statusMessage.value = {'type': 'add', 'message': copyAddedUrl.value + ' has been added to your domain list'}
+	userDomains.value = usePage().props.value.domains;
+});
 </script>
 
 <template>
@@ -42,9 +62,11 @@ let submit = (domainId, domainName) => {
 			<input type="text" v-model="formSearch.searchString" class="form-control" placeholder="Search domain list"/>
 		</div>
 	</div>
-	<div v-if="deleteStatus" v-text="deletedDomain + ' has been deleted from your list'" class="alert alert-info"/>
+	<div v-if="statusMessage.message != ''" :class="statusMessage.type == 'delete' ? 'alert alert-info' : 'alert alert-success'" v-text="statusMessage.message"/>
+		
+	
 	<div v-for="domain in filteredDomains">
-		<form @submit.prevent="submit(domain.id, domain.name)" id="form-domain-delete" class="mb-2">
+		<form @submit.prevent="submit(domain)" id="form-domain-delete" class="mb-2">
 			<div class="btn-group d-flex w-100">
 				<Link :href="'/hostname/' + domain.id" class="btn btn-outline-primary w-75" as="button" v-text="domain.name" @click="domainDisabled = true" :disabled="domainDisabled"/>
 				<button type="submit" class="btn btn-outline-danger w-25" v-text="submitButton" :disabled="formDomainDelete.processing || domainDisabled"/>

@@ -2,8 +2,12 @@
 import MainLayout from "@/Layout/MainLayout.vue";
 import DniwaHead from "@/Components/DniwaHead.vue";
 import DniwaDashboardDomains from "@/Components/DniwaDashboardDomains.vue"; 
+import AddDomainForm from "@/Components/DniwaAddDomain.vue";
 import { useForm, Link } from '@inertiajs/inertia-vue3'; 
 import { ref } from 'vue';
+
+let addDomainSuccess = ref(false);
+let addedUrl = ref('');
 
 let headlineMain = ref('Dashboard');
 let headlineSecondary = ref('Add domain');
@@ -13,17 +17,15 @@ let linkAccount = ref('Account');
 <template>
 	<DniwaHead title="Dashboard" />
 	<MainLayout>
-		<div class="d-flex align-content-end">
+		<div class="d-flex align-items-end">
 			<div>
 				<h2 class="m-1" v-text="headlineMain"/>
 			</div>
-			<div class="align-self-end p-1" style="margin-left:auto;">
-				<span class="text text-primary">
-					<Link href="/hostname" v-text="headlineSecondary"/>
-				</span>
+			<div class="align-self-end p-1 pe-0" style="margin-left:auto;">
+				<AddDomainForm @add-domain="(val) => {addDomainSuccess = val}" @added-url="(val) => {addedUrl = val}"/>
 			</div>
 		</div>
 		<hr class="mt-0"/>
-		<DniwaDashboardDomains />
+		<DniwaDashboardDomains :addDomainSuccess="addDomainSuccess" :addedUrl="addedUrl"/>
 	</MainLayout>
 </template>
