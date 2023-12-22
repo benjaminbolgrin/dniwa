@@ -22,8 +22,6 @@ let formSearch = useForm({
 	searchString: ''
 });
 
-const deletedDomain = ref('');
-const deleteStatus = ref(false);
 const domainDisabled = ref(false);
 const userDomains = ref(usePage().props.value.domains);
 const copyAddedUrl = toRef(props, 'addedUrl');
