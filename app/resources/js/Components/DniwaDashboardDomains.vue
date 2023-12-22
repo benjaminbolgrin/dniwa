@@ -66,8 +66,8 @@ watch(copyAddedUrl, () => {
 	<div v-for="domain in filteredDomains">
 		<form @submit.prevent="submit(domain)" id="form-domain-delete" class="mb-2">
 			<div class="btn-group d-flex w-100">
-				<Link :href="'/hostname/' + domain.id" class="btn btn-outline-primary w-75" as="button" v-text="domain.name" @click="domainDisabled = true" :disabled="domainDisabled"/>
-				<button type="submit" class="btn btn-outline-danger w-25" v-text="submitButton" :disabled="formDomainDelete.processing || domainDisabled"/>
+				<Link :href="'/hostname/' + domain.id" class="btn btn-outline-primary w-75" :class="formDomainDelete.processing ? 'disabled' : ''" v-text="domain.name" @click="domainDisabled = true"/>
+				<button type="submit" class="btn btn-outline-danger w-25" v-text="submitButton" :disabled="formDomainDelete.processing"/>
 			</div>
 		</form>
 	</div>
