@@ -1,4 +1,8 @@
 <script setup>
+let props = defineProps({
+	'httpData': Object,
+	'ageHttp': Number
+});
 </script>
 
 <template>
@@ -6,7 +10,8 @@
 		<thead>
 			<tr>
 				<th colspan="2" scope="col">
-					Http data
+					<span>Http data</span><br/>
+					<span class="text-muted" v-text="props.ageHttp == 0 ? 'Updated recently' : 'Updated ' + props.ageHttp + ' minutes ago'"/>
 				</th>
 			</tr>
 		</thead>
@@ -16,7 +21,7 @@
 					Response code:
 				</th>
 				<td class="text-right ps-3 text-start">
-					{{ $page.props.httpData.response_code }}
+					{{ props.httpData.response_code }}
 				</td>
 			</tr>
 			<tr>
@@ -24,7 +29,7 @@
 					Content-Type:
 				</th>
 				<td class="ps-3 text-start">
-					{{ $page.props.httpData.header }}
+					{{ props.httpData.header }}
 				</td>
 			</tr>
 			<tr>
@@ -32,7 +37,7 @@
 					Title:
 				</th>
 				<td class="ps-3 text-start">
-					{{ $page.props.httpData.title }}
+					{{ props.httpData.title }}
 				</td>
 			</tr>
 				

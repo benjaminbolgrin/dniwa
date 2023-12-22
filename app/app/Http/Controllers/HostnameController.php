@@ -43,13 +43,32 @@ class HostnameController extends Controller
 		# fetch data from html cache
 		$htmlData = $this->getHtmlCache();
 
+		# calculate seconds since last updates
+		$currentServerTime = strtotime(date('Y-m-d H:i:s'));
+
+		$updateTimeDNSA = strtotime($dnsA[0]->updated_at);
+		$updateTimeDNSMX = strtotime($dnsMX[0]->updated_at);
+		$updateTimeHttp = strtotime($httpData->updated_at);
+		$updateTimeHtml = strtotime($htmlData[0]->updated_at);
+		
+		$updateAgeDNSA = floor($currentServerTime - $updateTimeDNSA);
+		$updateAgeDNSMX = floor($currentServerTime - $updateTimeDNSMX);
+		$updateAgeHttp = floor($currentServerTime - $updateTimeHttp);
+		$updateAgeHtml = floor($currentServerTime - $updateTimeHtml);
+
 		# render view
 		return Inertia::render('DomainInfo', [
 			'dnsA' => $dnsA,
 			'dnsMX' => $dnsMX,
 			'domainName' => idn_to_utf8($domain->domain_name_ascii),
 			'httpData' => $httpData,
-			'htmlData' => $htmlData
+			'htmlData' => $htmlData,
+			'updateAge' => [
+				'a' => $updateAgeDNSA,
+				'mx' => $updateAgeDNSMX,
+				'http' => $updateAgeHttp,
+				'html' => $updateAgeHtml
+			]
 		]);
 	}
 

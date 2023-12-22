@@ -1,4 +1,8 @@
 <script setup>
+let props = defineProps({
+	'dnsMX': Object,
+	'ageDNSMX': Number
+});
 </script>
 
 <template>
@@ -6,12 +10,13 @@
 		<thead>
 			<tr>
 				<th scope="col">
-					MX records
+					<span>MX records</span><br/>
+					<span class="text-muted" v-text="props.ageDNSMX == 0 ? 'Updated recently': 'Updated '+ props.ageDNSMX +' minutes ago'"/>
 				</th>
 			</tr>
 		</thead>
 		<tbody>
-			<tr v-for="dnsMX in $page.props.dnsMX">
+			<tr v-for="dnsMX in props.dnsMX">
 				<td>
 					{{ dnsMX.content }}
 				</td>

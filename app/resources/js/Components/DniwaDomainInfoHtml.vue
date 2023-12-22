@@ -1,4 +1,8 @@
 <script setup>
+let props = defineProps({
+	'htmlData': Object,
+	'ageHtml': Number
+});
 </script>
 
 <template>
@@ -6,7 +10,8 @@
 		<thead>
 			<tr class="text-center">
 				<th colspan="4" scope="col">
-					Meta tags
+					<span>Meta tags</span><br/>
+					<span class="text-muted" v-text="props.ageHtml == 0 ? 'Updated recently' : 'Updated ' + props.ageHtml + ' minutes ago'"/>
 				</th>
 			</tr>
 			<tr>
@@ -25,7 +30,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			<tr v-for="metaData in $page.props.htmlData">
+			<tr v-for="metaData in props.htmlData">
 				<td v-if="metaData.meta_name != ''" class="text-end w-25 pe-3">
 					name
 				</td>
