@@ -40,7 +40,7 @@ let submit = () => {
 				<div v-if="formAddHostname.errors.hostname" v-text="formAddHostname.errors.hostname" class="text-danger"/>
 				<div v-else v-text="'&nbsp;'"/>
 					<div class="input-group w-auto">
-						<input type="text" id="formAddHostname.hostname" autofocus="autofocus" class="form-control" v-model="formAddHostname.hostname" placeholder="http://example.com"/> 
+						<input type="text" id="formAddHostname.hostname" class="form-control" v-model="formAddHostname.hostname" placeholder="http://example.com"/> 
 						<button type="submit" class="btn btn-secondary" :disabled="formAddHostname.processing">{{ submitButton }}</button>
 					</div>
 				</div>
