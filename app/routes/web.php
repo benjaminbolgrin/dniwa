@@ -26,7 +26,6 @@ Route::middleware('auth', 'userPreferences')->group(function () {
 	Route::get('/preferences', [PreferencesController::class, 'edit'])->name('preferences.edit');
 	Route::patch('/preferences', [PreferencesController::class, 'update'])->name('preferences.update');
 	Route::get('/hostname/{domain}', [HostnameController::class, 'show'])->name('hostname.show');
-	Route::get('/hostname', [HostnameController::class, 'add'])->name('hostname.add');
 	Route::put('/hostname', [HostnameController::class, 'store'])->name('hostname.store');
 	Route::delete('/{domain}', [DashboardController::class, 'delete'])->name('dashboard.delete');
 });

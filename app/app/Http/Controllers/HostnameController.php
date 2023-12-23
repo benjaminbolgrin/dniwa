@@ -72,10 +72,6 @@ class HostnameController extends Controller
 		]);
 	}
 
-	public function add(Request $request): Response{
-		return Inertia::render('DomainAdd');
-	}
-
 	public function store(StoreHostnameRequest $request): RedirectResponse{
 		
 		$url = $request->validated()['hostname'];
