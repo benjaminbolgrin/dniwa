@@ -1,19 +1,24 @@
 <script setup>
 import MainLayout from '@/Layout/MainLayout.vue';
 import DniwaHead from '@/Components/DniwaHead.vue';
-import {ref, watchEffect, onMounted} from 'vue';
-import {useForm, usePage} from '@inertiajs/inertia-vue3';
+import {ref, watchEffect} from 'vue';
+import {useForm} from '@inertiajs/inertia-vue3';
+
+let props = defineProps({
+	auth: Object
+});
+
+const headlineMain = 'Preferences';
+const headlineSec = 'Theme';
+const infoTextTheme = 'Set your preferred DNIWA theme.';
+const submitButton = 'Save';
+const themeLight = 'Light';
+const themeDark = 'Dark';
 
 let themeSuccess = ref(false);
-let headlineMain = ref('Preferences');
-let headlineSec = ref('Theme');
-let infoTextTheme = ref('Set your preferred DNIWA theme.');
-let submitButton = ref('Save');
-let themeLight = ref('Light');
-let themeDark = ref('Dark');
 
 let formTheme = useForm({
-	theme: usePage().props.value.auth.user.theme
+	theme: props.auth.user.theme
 });
 
 let submit = () =>{
@@ -37,20 +42,17 @@ watchEffect(() => {
 <template>
 	<DniwaHead title="Edit preferences"/>
 	<MainLayout>
-		<h2 class="m-1">
-		    {{ headlineMain }}
-		</h2>
+		<h2 class="m-1" v-text="headlineMain" />
 		<hr class="mt-0"/>
 		<section>
+			<!-- Success message -->
 			<div v-if="themeSuccess" class="alert alert-success" v-text="'Theme preference has been saved.'"/>
+			
+			<!-- Theme selection -->
 			<div class="p-2 mb-4 bg-secondary-subtle border border-secondary-subtle">
 				<header>
-					<h3 class="">
-						{{ headlineSec }}
-					</h3>
-					<p class="">
-						{{ infoTextTheme }}
-					</p>
+					<h3 v-text="headlineSec" />
+					<p v-text="infoTextTheme" />
 				</header>
 				<form @submit.prevent="submit" id="form-theme">
 					<div class="form-check form-check-inline">
