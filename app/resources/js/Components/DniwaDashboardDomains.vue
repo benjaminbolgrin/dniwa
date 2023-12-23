@@ -1,6 +1,6 @@
 <script setup>
 import {useForm, Link, usePage} from '@inertiajs/inertia-vue3';
-import { ref, computed, watch, toRef } from 'vue';
+import {ref, computed, watch, toRef} from 'vue';
 
 let props = defineProps([
 	'addDomainSuccess',
@@ -12,8 +12,8 @@ let statusMessage = ref({
 	'message': ''
 });
 
-let headlineDomainList = ref('Domain list');
-let submitButton = ref('Delete');
+const headlineDomainList = 'Domain list';
+const submitButton = 'Delete';
 
 let formDomainDelete = useForm({
 });
@@ -56,13 +56,17 @@ watch(copyAddedUrl, () => {
 		<div class="d-flex pt-4 pb-4">
 			<h3 v-text="headlineDomainList"/>
 		</div>
+
+		<!-- Search bar-->
 		<div class="d-flex pt-4 pb-4">
 			<input type="text" v-model="formSearch.searchString" class="form-control" placeholder="Search domain list"/>
 		</div>
+
 	</div>
+	<!-- Status message -->
 	<div v-if="statusMessage.message != ''" :class="statusMessage.type == 'delete' ? 'alert alert-info' : 'alert alert-success'" v-text="statusMessage.message"/>
 		
-	
+	<!-- Domain list -->
 	<div v-for="domain in filteredDomains">
 		<form @submit.prevent="submit(domain)" id="form-domain-delete" class="mb-2">
 			<div class="btn-group d-flex w-100">
