@@ -1,16 +1,14 @@
 <script setup>
-import MainLayout from "@/Layout/MainLayout.vue";
-import DniwaHead from "@/Components/DniwaHead.vue";
+import MainLayout from '@/Layout/MainLayout.vue';
+import DniwaHead from '@/Components/DniwaHead.vue';
 import { useForm, Link } from '@inertiajs/inertia-vue3';
-import { ref } from 'vue';
 
-let labelEmail = ref('Email');
-let labelPassword = ref('Password');
-let labelRememberMe = ref('Remember me');
-let submitButton = ref('Sign in');
-let linkForgot = ref('Forgot password');
-let linkSignup = ref('Don\'t have an account yet? Sign up now!');
-
+const labelEmail = 'Email';
+const labelPassword = 'Password';
+const labelRememberMe = 'Remember me';
+const submitButton = 'Sign in';
+const linkForgot = 'Forgot password';
+const linkSignup = 'Don\'t have an account yet? Sign up now!';
 
 let formSignin = useForm({
 	email: '',
@@ -22,6 +20,7 @@ let submit = () => {
 	formSignin.post('/signin')
 };
 </script>
+
 <template>
 	<DniwaHead title="Sign in" />
 	<MainLayout>
