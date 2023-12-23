@@ -1,16 +1,15 @@
 <script setup>
 import DniwaHead from '@/Components/DniwaHead.vue';
 import MainLayout from '@/Layout/MainLayout.vue';
-import {ref} from 'vue';
 import {useForm, Link} from '@inertiajs/inertia-vue3';
 
-let headlineMain = ref('Sign up');
-let labelName = ref('Name');
-let labelEmail = ref('Email');
-let labelPassword = ref('Password');
-let labelPasswordConfirmation = ref('Confirm password');
-let submitButton = ref('Sign up');
-let signinLink = ref('Already have an account? Sign in!');
+const headlineMain = 'Sign up';
+const labelName = 'Name';
+const labelEmail = 'Email';
+const labelPassword = 'Password';
+const labelPasswordConfirmation = 'Confirm password';
+const submitButton = 'Sign up';
+const signinLink = 'Already have an account? Sign in!';
 
 let signupForm = useForm({
 	name: '',
@@ -22,7 +21,6 @@ let signupForm = useForm({
 let submit = () =>{
 	signupForm.post('/signup');
 };
-
 </script>
 
 <template>
