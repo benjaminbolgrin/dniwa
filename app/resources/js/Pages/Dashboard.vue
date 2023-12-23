@@ -1,19 +1,17 @@
 <script setup>
-import MainLayout from "@/Layout/MainLayout.vue";
-import DniwaHead from "@/Components/DniwaHead.vue";
-import DniwaDashboardDomains from "@/Components/DniwaDashboardDomains.vue"; 
-import AddDomainForm from "@/Components/DniwaAddDomain.vue";
-import { useForm, Link } from '@inertiajs/inertia-vue3'; 
+import MainLayout from '@/Layout/MainLayout.vue';
+import DniwaHead from '@/Components/DniwaHead.vue';
+import DniwaDashboardDomains from '@/Components/DniwaDashboardDomains.vue'; 
+import AddDomainForm from '@/Components/DniwaAddDomain.vue';
+import { useForm } from '@inertiajs/inertia-vue3'; 
 import { ref } from 'vue';
 
 let addDomainSuccess = ref(false);
 let addedUrl = ref('');
 
-let headlineMain = ref('Dashboard');
-let headlineSecondary = ref('Add domain');
-let linkPreferences = ref('Preferences');
-let linkAccount = ref('Account');
+const headlineMain = 'Dashboard';
 </script>
+
 <template>
 	<DniwaHead title="Dashboard" />
 	<MainLayout>
