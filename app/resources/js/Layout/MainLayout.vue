@@ -3,6 +3,10 @@ import NavigationLinks from '@/Components/NavigationLinks.vue';
 import {Link, usePage} from '@inertiajs/inertia-vue3';
 import {ref, onMounted} from 'vue';
 
+let props = {
+	'auth': usePage().props.value.auth
+};
+
 const theme = ref(document.querySelector('html').getAttribute('data-bs-theme'));
 
 function setTheme(theme){
@@ -21,13 +25,13 @@ let toggleTheme = () => {
 };
 
 onMounted(() => {
-	if(usePage().props.value.auth.user.theme){
-		theme.value = usePage().props.value.auth.user.theme;
+	if(props.auth.user.theme){
+		theme.value = props.auth.user.theme;
 	}else if(localStorage.getItem('theme')){
 		theme.value = localStorage.getItem('theme');
 	}
 	setTheme(theme.value);
-})
+});
 </script>
 
 <template>
@@ -38,9 +42,9 @@ onMounted(() => {
 			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
 			</button>
-			<NavigationLinks v-if="$page.props.auth.user.username"/>
-			<button v-if="!$page.props.auth.user.username" class="btn btn-primary" @click="toggleTheme" id="color-switch" v-text="theme == 'dark' ? 'Light mode' : 'Dark mode'"/>
-			<Link href="/logout" as="button" v-else-if="$page.props.auth.user.username" class="btn btn-primary"  id="sign-out" v-text="'Sign out'" method="post"/>
+			<NavigationLinks v-if="props.auth.user.username"/>
+			<button v-if="!props.auth.user.username" class="btn btn-primary" @click="toggleTheme" id="color-switch" v-text="theme == 'dark' ? 'Light mode' : 'Dark mode'"/>
+			<Link href="/logout" as="button" v-else-if="props.auth.user.username" class="btn btn-primary"  id="sign-out" v-text="'Sign out'" method="post"/>
 		</div>
 	</nav>
 	<!-- End navigation bar -->
@@ -50,4 +54,3 @@ onMounted(() => {
 	</div>
 	<!-- End content -->
 </template>
-
