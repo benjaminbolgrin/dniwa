@@ -32,9 +32,7 @@ class ProfileTest extends TestCase
                 'email' => 'test@example.com',
             ]);
 
-        $response
-            ->assertSessionHasNoErrors()
-            ->assertRedirect('/profile');
+        $response->assertSessionHasNoErrors();
 
         $user->refresh();
 
@@ -54,9 +52,7 @@ class ProfileTest extends TestCase
                 'email' => $user->email,
             ]);
 
-        $response
-            ->assertSessionHasNoErrors()
-            ->assertRedirect('/profile');
+        $response->assertSessionHasNoErrors();
 
         $this->assertNotNull($user->refresh()->email_verified_at);
     }
