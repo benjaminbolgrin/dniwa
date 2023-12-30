@@ -38,9 +38,12 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-	$theme = null;
+	$theme = 'light';
 	if(Auth::user()){
-		$theme = UserSetting::where('user_id', Auth::user()->id)->first()->theme;
+		$userSetting = UserSetting::where('user_id', Auth::user()->id)->first();
+		if(!empty($userSetting->theme)){
+			$theme = $userSetting->theme;
+		}
 	}   	
         return array_merge(parent::share($request), [
 		'auth' => [
