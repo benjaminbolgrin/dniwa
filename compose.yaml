@@ -17,6 +17,8 @@ services:
       - ./app/phpunit.xml:/var/www/html/phpunit.xml
       - vol-static:/var/www/html/public/static
       - vol-build:/var/www/html/public/build
+    env_file:
+      - .secrets/dniwa.env
     command: sh -c "npm run build && docker-php-entrypoint && php-fpm"
     networks:
       - dniwa
@@ -39,11 +41,10 @@ services:
     container_name: dniwa-mariadb
     volumes:
       - vol-mariadb:/var/lib/mysql
+    env_file:
+      - .secrets/dniwa.env
     environment:
       MYSQL_RANDOM_ROOT_PASSWORD: 1
-      MYSQL_DATABASE: dniwa
-      MYSQL_USER: dniwauser
-      MYSQL_PASSWORD: secret
     networks:
       - dniwa
 
