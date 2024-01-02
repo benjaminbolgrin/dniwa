@@ -1,10 +1,26 @@
 services:
-
+  
+  mariadb:
+    image: mariadb:11.1.2
+    container_name: dniwa-mariadb
+    volumes:
+      - vol-mariadb:/var/lib/mysql
+    env_file:
+      - .secrets/dniwa.env
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: 1
+    networks:
+      - dniwa
+  
   php-fpm:
     build:
       context: .
       dockerfile: ./container-conf/dniwa-php-fpm/Dockerfile
     container_name: dniwa-php-fpm
+    restart: on-failure
+    depends_on:
+      mariadb:
+        condition: service_started
     volumes:
       - ./app/resources:/var/www/html/resources
       - ./app/app:/var/www/html/app
@@ -19,7 +35,7 @@ services:
       - vol-build:/var/www/html/public/build
     env_file:
       - .secrets/dniwa.env
-    command: sh -c "npm run build && docker-php-entrypoint && php-fpm"
+    command: sh -c "php artisan migrate && npm run build && docker-php-entrypoint && php-fpm"
     networks:
       - dniwa
 
@@ -28,6 +44,10 @@ services:
       context: .
       dockerfile: ./container-conf/dniwa-nginx/Dockerfile
     container_name: dniwa-nginx
+    restart: on-failure
+    depends_on:
+      php-fpm:
+        condition: service_started
     volumes:
       - vol-static:/var/www/html/public/static
       - vol-build:/var/www/html/public/build
@@ -35,24 +55,12 @@ services:
       - 8080:80
     networks:
       - dniwa
-
-  mariadb:
-    image: mariadb:11.1.2
-    container_name: dniwa-mariadb
-    volumes:
-      - vol-mariadb:/var/lib/mysql
-    env_file:
-      - .secrets/dniwa.env
-    environment:
-      MYSQL_RANDOM_ROOT_PASSWORD: 1
-    networks:
-      - dniwa
-
-networks:
-  dniwa:
-    name: dniwa-network
-
+  
 volumes:
   vol-mariadb:
   vol-static:
   vol-build:
+
+networks:
+  dniwa:
+    name: dniwa-network
