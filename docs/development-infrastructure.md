@@ -15,6 +15,11 @@ This container stores Laravel's files at /var/www/html/.
 ### dniwa-mariadb
 This container holds the project's SQL database.
 
+## Set up
+Create a '.secrets' directory in the project's root directory.
+Move the 'dniwa.env' file to the '.secrets' directory.
+Make desired changes to the 'dniwa.env' file. (e.g. change database user and/or password etc.)
+
 ## Start up
 To start the development infrastructure, run the following command from the project's root directory as a priviliged user:
 
