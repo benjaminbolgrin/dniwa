@@ -46,10 +46,23 @@ class HostnameController extends Controller
 		# calculate seconds since last updates
 		$currentServerTime = strtotime(date('Y-m-d H:i:s'));
 
-		$updateTimeDNSA = strtotime($dnsA[0]->updated_at);
-		$updateTimeDNSMX = strtotime($dnsMX[0]->updated_at);
-		$updateTimeHttp = strtotime($httpData->updated_at);
-		$updateTimeHtml = strtotime($htmlData[0]->updated_at);
+		$updateTimeDNSA = $currentServerTime;
+		$updateTimeDNSMX = $currentServerTime;
+		$updateTimeHttp = $currentServerTime;
+		$updateTimeHtml = $currentServerTime;
+		
+		if(!empty($dnsA[0])){
+			$updateTimeDNSA = strtotime($dnsA[0]->updated_at);
+		}
+		if(!empty($dnsMX[0])){
+			$updateTimeDNSMX = strtotime($dnsMX[0]->updated_at);
+		}	
+		if(!empty($httpData->response_code)){
+			$updateTimeHttp = strtotime($httpData->updated_at);
+		}
+		if(!empty($htmlData[0])){
+			$updateTimeHtml = strtotime($htmlData[0]->updated_at);
+		}
 		
 		$updateAgeDNSA = floor($currentServerTime - $updateTimeDNSA);
 		$updateAgeDNSMX = floor($currentServerTime - $updateTimeDNSMX);
