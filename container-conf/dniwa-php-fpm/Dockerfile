@@ -24,5 +24,8 @@ RUN apk update && apk add curl \
 			curl -LO 'https://github.com/twbs/bootstrap/releases/download/v5.3.2/bootstrap-5.3.2-dist.zip' && \
 			unzip -q 'bootstrap-5.3.2-dist.zip' && \
 			rm 'bootstrap-5.3.2-dist.zip' && \
+			cd /var/www/html/storage/logs && \
+			touch 'laravel.log' && \
+			chmod 777 'laravel.log' && \
 			cd /var/www/html
 CMD ["docker-php-entrypoint", "php-fpm"]
