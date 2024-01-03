@@ -233,7 +233,9 @@ Trait DomainInfoTrait{
 			$httpRecords = $this->getHttpInformation();
 			if(count($httpRecords) > 0){
 				$httpData = HttpData::updateOrCreate([
-					'domain_id' => $this->domain->id,
+					'domain_id' => $this->domain->id
+					],
+					[
 					'response_code' => $httpRecords['response_code'],
 					'header' => $httpRecords['header'],
 					'title' => $httpRecords['title']]);
