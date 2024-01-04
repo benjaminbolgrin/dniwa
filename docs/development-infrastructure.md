@@ -34,3 +34,8 @@ As a privileged user, you can run the following command to make migrations:
 ## Build assets (JS, CSS)
 
 **docker exec dniwa-php-fpm npm run build**
+
+## DBMS settings
+If you want to make changes to the DBMS (e.g. change database or user name in /.secrets/dniwa.env), after the first invocation of 'docker compose up', you need to delete the corresponding docker volume. By doing so, you will lose all previously saved data.
+
+**docker volume rm dniwa_vol-mariadb**
