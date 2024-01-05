@@ -11,8 +11,8 @@ services:
       MYSQL_RANDOM_ROOT_PASSWORD: 1
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
-      start_period: 10s
-      interval: 10s
+      start_period: 3s
+      interval: 5s
       timeout: 5s
       retries: 3
     networks:
