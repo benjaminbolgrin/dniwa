@@ -25,7 +25,7 @@ let toggleTheme = () => {
 };
 
 onMounted(() => {
-	if(props.auth.user.theme){
+	if(props.auth.user.username){
 		theme.value = props.auth.user.theme;
 	}else if(localStorage.getItem('theme')){
 		theme.value = localStorage.getItem('theme');
@@ -49,7 +49,7 @@ onMounted(() => {
 	</nav>
 	<!-- End navigation bar -->
 	<!-- Start content -->
-	<div class="container-md"> 
+	<div class="container-md">
 		<slot />
 	</div>
 	<!-- End content -->
