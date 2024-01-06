@@ -1,7 +1,7 @@
 <script setup>
 import MainLayout from '@/Layout/MainLayout.vue';
 import DniwaHead from '@/Components/DniwaHead.vue';
-import {useForm} from '@inertiajs/inertia-vue3';
+import {useForm} from '@inertiajs/vue3';
 
 const headlineMain = 'Account settings';
 const headlineProfileInfo = 'Profile information';

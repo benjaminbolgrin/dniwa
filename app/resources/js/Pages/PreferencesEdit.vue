@@ -2,7 +2,7 @@
 import MainLayout from '@/Layout/MainLayout.vue';
 import DniwaHead from '@/Components/DniwaHead.vue';
 import {ref, watchEffect} from 'vue';
-import {useForm} from '@inertiajs/inertia-vue3';
+import {useForm} from '@inertiajs/vue3';
 
 let props = defineProps({
 	auth: Object

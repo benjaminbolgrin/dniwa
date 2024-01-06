@@ -2,7 +2,7 @@
 import DniwaHead from '@/Components/DniwaHead.vue';
 import MainLayout from '@/Layout/MainLayout.vue';
 import { ref } from 'vue';
-import { useForm } from '@inertiajs/inertia-vue3';
+import { useForm } from '@inertiajs/vue3';
 
 const resetSuccess = ref(false);
 const labelEmail = 'Email';

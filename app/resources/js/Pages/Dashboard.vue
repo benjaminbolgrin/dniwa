@@ -3,7 +3,7 @@ import MainLayout from '@/Layout/MainLayout.vue';
 import DniwaHead from '@/Components/DniwaHead.vue';
 import DniwaDashboardDomains from '@/Components/DniwaDashboardDomains.vue'; 
 import AddDomainForm from '@/Components/DniwaAddDomain.vue';
-import { useForm } from '@inertiajs/inertia-vue3'; 
+import { useForm } from '@inertiajs/vue3'; 
 import { ref } from 'vue';
 
 let addDomainSuccess = ref(false);

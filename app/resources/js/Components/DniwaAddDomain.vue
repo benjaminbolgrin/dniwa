@@ -1,6 +1,6 @@
 <script setup>
 import {ref} from 'vue';
-import {useForm} from '@inertiajs/inertia-vue3';
+import {useForm} from '@inertiajs/vue3';
 
 const emit = defineEmits(['addDomain',]);
 

@@ -15,7 +15,7 @@ RUN apk update && apk add curl \
 			composer require laravel/breeze && \
 			composer require inertiajs/inertia-laravel && \
 			php artisan breeze:install blade && \
-			npm install @inertiajs/inertia @inertiajs/inertia-vue3 @inertiajs/progress && \
+			npm install @inertiajs/vue3 @inertiajs/progress && \
 			npm install -D @vue/compiler-sfc && \
 			npm install --save-dev @vitejs/plugin-vue && \
 			npm install && \

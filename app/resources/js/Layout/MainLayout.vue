@@ -1,10 +1,10 @@
 <script setup>
 import NavigationLinks from '@/Components/NavigationLinks.vue';
-import {Link, usePage} from '@inertiajs/inertia-vue3';
+import {Link, usePage} from '@inertiajs/vue3';
 import {ref, onMounted} from 'vue';
 
 let props = {
-	'auth': usePage().props.value.auth
+	'auth': usePage().props.auth
 };
 
 const theme = ref(document.querySelector('html').getAttribute('data-bs-theme'));

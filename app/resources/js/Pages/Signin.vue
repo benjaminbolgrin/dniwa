@@ -1,7 +1,7 @@
 <script setup>
 import MainLayout from '@/Layout/MainLayout.vue';
 import DniwaHead from '@/Components/DniwaHead.vue';
-import { useForm, Link } from '@inertiajs/inertia-vue3';
+import { useForm, Link } from '@inertiajs/vue3';
 
 const labelEmail = 'Email';
 const labelPassword = 'Password';

@@ -1,5 +1,5 @@
 <script setup>
-import {useForm, Link, usePage} from '@inertiajs/inertia-vue3';
+import {useForm, Link, usePage} from '@inertiajs/vue3';
 import {ref, computed, watch, toRef} from 'vue';
 
 let props = defineProps([
@@ -23,7 +23,7 @@ let formSearch = useForm({
 });
 
 const domainDisabled = ref(false);
-const userDomains = ref(usePage().props.value.domains);
+const userDomains = ref(usePage().props.domains);
 const copyAddedUrl = toRef(props, 'addedUrl');
 
 const filteredDomains = computed(()=>{
@@ -47,7 +47,7 @@ let submit = (domain) => {
 
 watch(copyAddedUrl, () => {
 	statusMessage.value = {'type': 'add', 'message': copyAddedUrl.value + ' has been added to your domain list'}
-	userDomains.value = usePage().props.value.domains;
+	userDomains.value = usePage().props.domains;
 });
 </script>
 
