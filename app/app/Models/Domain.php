@@ -36,7 +36,7 @@ class Domain extends Model
 	}
 
 	# get html meta data for this domain
-	public function get htmlMetaData(): HasManyThrough{
+	public function htmlMetaData(): HasManyThrough{
 		return $this->hasManyThrough(HtmlMetaData::class, HttpData::class);
 	}
 }
