@@ -14,17 +14,12 @@ use Inertia\Response;
 class DashboardController extends Controller
 {
 	public function delete(Request $request, Domain $domain): RedirectResponse{
-		$domainId = $domain->id;
-		$userId = $request->user()->id;
-
+		
 		# check if the domain is on user's list
-		if(!UserDomain::where('domain_id', $domainId)->where('user_id', $userId)->exists()){
-			abort(404);
-		}
+		$this->authorize('delete', $domain);
 		
 		# delete domain from user's list
-		$userDomain = UserDomain::where('domain_id', $domainId)->where('user_id', $userId)->first();
-		$userDomain->delete();
+		$request->user()->domains()->detach($domain);
 
 		return redirect()->back()->with(['status' => 'domain-deleted', 'deletedDomain' => idn_to_utf8($domain->domain_name_ascii)]);
 	}
