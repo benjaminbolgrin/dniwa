@@ -25,13 +25,27 @@ class DashboardController extends Controller
 	}
 
 	public function listDomains(Request $request): Response{
-		$domains = DB::table('user_domains')->leftJoin('domains', 'user_domains.domain_id', '=', 'domains.id')->where('user_domains.user_id', $request->user()->id)->orderBy('domain_name_ascii')->get();
-		$domainNames = array();
+		
+		# get user's domains
+		$domains = Domain::whereRelation('users', 'users.id', $request->user()->id)->get();
+
+		# create a domain list, containing only the fields 'id' and 'name'
+		# encode punycode names to international domain name
+		$domainList = array();
 		foreach($domains as $domain){
-			$domainArray = ['id' => $domain->domain_id,
-					'name' => idn_to_utf8($domain->domain_name_ascii)];
-			array_push($domainNames, $domainArray);
+			$domainArray = [
+				'id' => $domain->id,
+				'name' => idn_to_utf8($domain->domain_name_ascii)
+			];
+			$domainList[] = $domainArray;
 		}
-		return Inertia::render('Dashboard', ['domains' => $domainNames]);
+
+		# sort domain list by name ascending
+		array_multisort(
+			array_column($domainList, 'name'), SORT_ASC,
+			$domainList
+		);
+
+		return Inertia::render('Dashboard', ['domains' => $domainList]);
 	}
 }
