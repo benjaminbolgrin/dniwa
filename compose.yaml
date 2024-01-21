@@ -1,4 +1,10 @@
 services:
+
+  redis:
+    image: redis:7.2.4
+    container_name: dniwa-redis
+    networks:
+      - dniwa
   
   mariadb:
     image: mariadb:11.1.2
@@ -24,6 +30,8 @@ services:
       dockerfile: ./container-conf/dniwa-php-fpm/Dockerfile
     container_name: dniwa-php-fpm
     depends_on:
+      redis:
+        condition: service_started
       mariadb:
         condition: service_healthy
     volumes:
@@ -40,7 +48,7 @@ services:
       - vol-build:/var/www/html/public/build
     env_file:
       - .secrets/dniwa.env
-    command: sh -c "php artisan migrate && npm run build && docker-php-entrypoint && php-fpm"
+    command: sh -c "php /var/www/html/artisan migrate && npm run build && docker-php-entrypoint && php-fpm & php /var/www/html/artisan queue:work"
     networks:
       - dniwa
 

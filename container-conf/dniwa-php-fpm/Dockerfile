@@ -9,8 +9,12 @@ RUN apk update && apk add curl \
 			php-session \
 			php-tokenizer \
 			php-xmlwriter \
-			php-fileinfo && \
+			php-fileinfo \
+			build-base \
+			autoconf && \
 			docker-php-ext-install mysqli pdo pdo_mysql && \
+			echo '' | pecl install redis && \
+			docker-php-ext-enable redis.so && \
 			composer create-project laravel/laravel . && \
 			composer require laravel/breeze && \
 			composer require inertiajs/inertia-laravel && \
