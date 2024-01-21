@@ -1,7 +1,7 @@
 # DNIWA development infrastructure
 The development infrastructure is utilizing docker containers.
 
-## There are 3 containers specified in the /compose.yaml file.
+## There are 4 containers specified in the /compose.yaml file.
 
 ### dniwa-nginx
 The 'dniwa-nginx' container serves web pages and exposes port 80 to the host's port 8080.
@@ -14,6 +14,9 @@ This container stores Laravel's files at /var/www/html/.
 
 ### dniwa-mariadb
 This container holds the project's SQL database.
+
+### dniwa-redis
+This container is the queue driver for Laravel jobs.
 
 ## Set up
 Create a '.secrets' directory in the project's root directory.
