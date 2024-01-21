@@ -15,55 +15,40 @@ use App\Models\HttpData;
 use App\Models\HtmlMetaData;
 use App\Http\Requests\StoreHostnameRequest;
 use Carbon\Carbon;
-use App\Traits\DomainInfoTrait;
+use App\Jobs\UpdateCache;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class HostnameController extends Controller
 {
-	use DomainInfoTrait;
-
 	public function show(Request $request, Domain $domain): Response{
 
-		$this->domain = $domain;
+		$this->authorize('view', $domain);
 
-		if(! Gate::allows('view-domain-info', $this->domain)){
-			abort(403);
-		}
+		(new UpdateCache($domain))->handle();
 
-		$this->updateOrCreateDomainInformation();
+		# get cached dns 'A' records
+		$dnsA = $domain->dnsRecordsA()->get() ?? new DNSRecord();
 
-		# fetch cached dns records
-		$dnsA = DNSRecord::where('domain_id', $domain->id)->where('type', 'A')->get();
-		$dnsMX = DNSRecord::where('domain_id', $domain->id)->where('type', 'MX')->get();
-
-		# fetch data from http cache
-		$httpData = $this->getHttpCache();
+		# get cached dns 'MX' records
+		$dnsMX = $domain->dnsRecordsMX()->get() ?? new DNSRecord();
 		
-		# fetch data from html cache
-		$htmlData = $this->getHtmlCache();
+		# get cached http records
+		$httpData = $domain->httpRecords()->first() ?? new HttpData();
+
+		# get cached html meta data
+		$htmlData = $domain->htmlMetaData()->get() ?? new HtmlMetaData();;
+
+		# get current server time
+		$currentServerTime = strtotime(date('Y-m-d H:i:s'));
+		
+		# get seconds since last updates or set to current server time
+		$updateTimeDNSA = strtotime($dnsA->first()->updated_at) ?? $currentServerTime;
+		$updateTimeDNSMX = strtotime($dnsMX->first()->updated_at) ?? $currentServerTime;
+		$updateTimeHttp = strtotime($httpData->updated_at) ?? $currentServerTime;
+		$updateTimeHtml = strtotime($htmlData->first()->updated_at) ?? $currentServerTime;
 
 		# calculate seconds since last updates
-		$currentServerTime = strtotime(date('Y-m-d H:i:s'));
-
-		$updateTimeDNSA = $currentServerTime;
-		$updateTimeDNSMX = $currentServerTime;
-		$updateTimeHttp = $currentServerTime;
-		$updateTimeHtml = $currentServerTime;
-		
-		if(!empty($dnsA[0])){
-			$updateTimeDNSA = strtotime($dnsA[0]->updated_at);
-		}
-		if(!empty($dnsMX[0])){
-			$updateTimeDNSMX = strtotime($dnsMX[0]->updated_at);
-		}	
-		if(!empty($httpData->response_code)){
-			$updateTimeHttp = strtotime($httpData->updated_at);
-		}
-		if(!empty($htmlData[0])){
-			$updateTimeHtml = strtotime($htmlData[0]->updated_at);
-		}
-		
 		$updateAgeDNSA = floor($currentServerTime - $updateTimeDNSA);
 		$updateAgeDNSMX = floor($currentServerTime - $updateTimeDNSMX);
 		$updateAgeHttp = floor($currentServerTime - $updateTimeHttp);
