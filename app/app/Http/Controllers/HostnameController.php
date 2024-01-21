@@ -42,10 +42,10 @@ class HostnameController extends Controller
 		$currentServerTime = Date::now()->timestamp;
 		
 		# get seconds since last updates or set to current server time
-		$updateTimeDNSA = Date::createFromFormat('Y-m-d H:i:s', $dnsA->first()->updated_at)->timestamp ?? $currentServerTime;
-		$updateTimeDNSMX = Date::createFromFormat('Y-m-d H:i:s', $dnsMX->first()->updated_at)->timestamp ?? $currentServerTime;
-		$updateTimeHttp = Date::createFromFormat('Y-m-d H:i:s', $httpData->updated_at)->timestamp ?? $currentServerTime;
-		$updateTimeHtml = Date::createFromFormat('Y-m-d H:i:s', $htmlData->first()->updated_at)->timestamp ?? $currentServerTime;
+		$updateTimeDNSA = $dnsA?->first()?->updated_at ? Date::createFromFormat('Y-m-d H:i:s', $dnsA->first()->updated_at)->timestamp : $currentServerTime;
+		$updateTimeDNSMX = $dnsMX?->first()?->updated_at ? Date::createFromFormat('Y-m-d H:i:s', $dnsMX->first()->updated_at)->timestamp : $currentServerTime;
+		$updateTimeHttp = $httpData?->updated_at ? Date::createFromFormat('Y-m-d H:i:s', $httpData->updated_at)->timestamp : $currentServerTime;
+		$updateTimeHtml = $htmlData?->first()?->updated_at ? Date::createFromFormat('Y-m-d H:i:s', $htmlData->first()->updated_at)->timestamp : $currentServerTime;
 
 		# calculate seconds since last updates
 		$updateAgeDNSA = $currentServerTime - $updateTimeDNSA;
@@ -93,6 +93,9 @@ class HostnameController extends Controller
 
 		# associate the user with the domain name
 		$request->user()->domains()->attach($domain);
+
+		# send an 'UpdateCache' job to the queue
+		UpdateCache::dispatch($domain);
 		
 		return redirect()->back()->with(['status' => 'hostname-added', 'domain' => idn_to_utf8($domainName)]);
 	}
