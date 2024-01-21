@@ -92,9 +92,7 @@ class HostnameController extends Controller
 		$domain = Domain::firstOrCreate(['domain_name_ascii' => $domainName]);
 
 		# associate the user with the domain name
-		$domainId = $domain->id;
-		$userId = $request->user()->id;
-		$userDomain = UserDomain::firstOrCreate(['user_id' => $userId, 'domain_id' => $domainId]);
+		$request->user()->domains()->attach($domain);
 		
 		return redirect()->back()->with(['status' => 'hostname-added', 'domain' => idn_to_utf8($domainName)]);
 	}
