@@ -6,15 +6,14 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Date;
 use App\Models\Domain;
 use App\Models\UserDomain;
 use App\Models\DNSRecord;
 use App\Models\HttpData;
 use App\Models\HtmlMetaData;
 use App\Http\Requests\StoreHostnameRequest;
-use Carbon\Carbon;
 use App\Jobs\UpdateCache;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -40,19 +39,19 @@ class HostnameController extends Controller
 		$htmlData = $domain->htmlMetaData()->get() ?? new HtmlMetaData();;
 
 		# get current server time
-		$currentServerTime = strtotime(date('Y-m-d H:i:s'));
+		$currentServerTime = Date::now()->timestamp;
 		
 		# get seconds since last updates or set to current server time
-		$updateTimeDNSA = strtotime($dnsA->first()->updated_at) ?? $currentServerTime;
-		$updateTimeDNSMX = strtotime($dnsMX->first()->updated_at) ?? $currentServerTime;
-		$updateTimeHttp = strtotime($httpData->updated_at) ?? $currentServerTime;
-		$updateTimeHtml = strtotime($htmlData->first()->updated_at) ?? $currentServerTime;
+		$updateTimeDNSA = Date::createFromFormat('Y-m-d H:i:s', $dnsA->first()->updated_at)->timestamp ?? $currentServerTime;
+		$updateTimeDNSMX = Date::createFromFormat('Y-m-d H:i:s', $dnsMX->first()->updated_at)->timestamp ?? $currentServerTime;
+		$updateTimeHttp = Date::createFromFormat('Y-m-d H:i:s', $httpData->updated_at)->timestamp ?? $currentServerTime;
+		$updateTimeHtml = Date::createFromFormat('Y-m-d H:i:s', $htmlData->first()->updated_at)->timestamp ?? $currentServerTime;
 
 		# calculate seconds since last updates
-		$updateAgeDNSA = floor($currentServerTime - $updateTimeDNSA);
-		$updateAgeDNSMX = floor($currentServerTime - $updateTimeDNSMX);
-		$updateAgeHttp = floor($currentServerTime - $updateTimeHttp);
-		$updateAgeHtml = floor($currentServerTime - $updateTimeHtml);
+		$updateAgeDNSA = $currentServerTime - $updateTimeDNSA;
+		$updateAgeDNSMX = $currentServerTime - $updateTimeDNSMX;
+		$updateAgeHttp = $currentServerTime - $updateTimeHttp;
+		$updateAgeHtml = $currentServerTime - $updateTimeHtml;
 
 		# render view
 		return Inertia::render('DomainInfo', [
