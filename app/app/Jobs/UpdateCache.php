@@ -8,11 +8,11 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Carbon;
 use DOMDocument;
 use Exception;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Date;
 use App\Models\Domain;
 use App\Models\DNSRecord;
 use App\Models\HttpData;
@@ -36,9 +36,9 @@ class UpdateCache implements ShouldQueue
 	}
 	
 	private function isDnsCacheFresh(): bool{
-		if(DNSRecord::where('domain_id', $this->domain->id)->exists()){
-			$timeAgo = Carbon::now()->subMinutes($this->cacheMinutes);
-			if(DNSRecord::where('domain_id', $this->domain->id)->first()->updated_at->gt($timeAgo)){
+		if($this->domain->dnsRecords()->exists()){
+			$timePassed = Date::now()->subMinutes($this->cacheMinutes);
+			if($this->domain->dnsRecords()->first()->updated_at->gt($timePassed)){
 				return true;
 			}
 		}
@@ -46,9 +46,9 @@ class UpdateCache implements ShouldQueue
 	}
 
 	private function isHttpCacheFresh(): bool{
-		if(HttpData::where('domain_id', $this->domain->id)->exists()){
-			$timeAgo = Carbon::now()->subMinutes($this->cacheMinutes);
-			if(HttpData::where('domain_id', $this->domain->id)->first()->updated_at->gt($timeAgo)){
+		if($this->domain->httpRecords()->exists()){
+			$timePassed = Date::now()->subMinutes($this->cacheMinutes);
+			if($this->domain->httpRecords()->first()->updated_at->gt($timePassed)){
 				return true;
 			}
 		}
@@ -56,13 +56,10 @@ class UpdateCache implements ShouldQueue
 	}
 
 	private function isHtmlCacheFresh(): bool{
-		if(HttpData::where('domain_id', $this->domain->id)->exists()){
-			$httpData = HttpData::where('domain_id', $this->domain->id)->first();
-			if(HtmlMetaData::where('http_data_id', $httpData->id)->exists()){
-				$timeAgo = Carbon::now()->subMinutes($this->cacheMinutes);
-				if(HtmlMetaData::where('http_data_id', $httpData->id)->first()->updated_at->gt($timeAgo)){
-					return true;
-				}
+		if($this->domain->htmlMetaData()->exists()){
+			$timePassed = Date::now()->subMinutes($this->cacheMinutes);
+			if($this->domain->htmlMetaData()->first()->updated_at->gt($timePassed)){
+				return true;
 			}
 		}
 		return false;
@@ -82,7 +79,7 @@ class UpdateCache implements ShouldQueue
 					'content' => htmlspecialchars($record['ip']),
 					'hostname' => htmlspecialchars($record['host'])
 				];
-				array_push($this->dnsRecords, $element);
+				$this->dnsRecords[] = $element;
 			}
 
 			foreach($dnsAWWW as $record){
@@ -91,7 +88,7 @@ class UpdateCache implements ShouldQueue
 					'content' => htmlspecialchars($record['ip']),
 					'hostname' => htmlspecialchars($record['host'])
 				];
-				array_push($this->dnsRecords, $element);
+				$this->dnsRecords[] = $element;
 				
 			}
 			foreach($dnsMX as $record){
@@ -100,7 +97,7 @@ class UpdateCache implements ShouldQueue
 					'content' => htmlspecialchars($record['target']),
 					'hostname' => htmlspecialchars($record['host'])
 				];
-				array_push($this->dnsRecords, $element);
+				$this->dnsRecords[] = $element;
 
 			}
 		}catch(\Exception $e){
@@ -190,7 +187,7 @@ class UpdateCache implements ShouldQueue
 							'meta_content' => $content, 
 							'meta_property' => $property,
 							'meta_itemprop' => $itemprop];
-						array_push($this->htmlRecords, $metaNode);
+						$this->htmlRecords[] = $metaNode;
 					}
 				}
 			}
