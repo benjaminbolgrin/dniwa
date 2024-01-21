@@ -20,6 +20,11 @@ class Domain extends Model
 		return $this->belongsToMany(User::class, 'user_domains', 'domain_id', 'user_id');
 	}
 
+	# get all dns records
+	public function dnsRecords(): HasMany{
+		return $this->hasMany(DNSRecord::class);
+	}
+
 	# get all A records for this domain
 	public function dnsRecordsA(): HasMany{
 		return $this->hasMany(DNSRecord::class)->where('type', 'A');
