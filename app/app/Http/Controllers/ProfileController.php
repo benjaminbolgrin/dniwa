@@ -17,8 +17,8 @@ class ProfileController extends Controller
 	*/
 	public function edit(Request $request): Response{
 		return Inertia::render('ProfileEdit', [
-			'userName' => $request->user()->name,
-			'userEmail' => $request->user()->email
+			'userName' => $request->user()?->name,
+			'userEmail' => $request->user()?->email
 		]);
 	}
 
@@ -27,13 +27,13 @@ class ProfileController extends Controller
 	*/
 	public function update(ProfileUpdateRequest $request): Response{
 		$newUserData = $request->validated();
-		$request->user()->fill($newUserData);
+		$request->user()?->fill($newUserData);
 
-		if ($request->user()->isDirty('email')) {
+		if ($request->user()?->isDirty('email')) {
 			$request->user()->email_verified_at = null;
 		}
 
-		$request->user()->save();
+		$request->user()?->save();
 
 		return Inertia::render('ProfileEdit', ['status' => 'profile-updated']);
 	}
@@ -50,7 +50,7 @@ class ProfileController extends Controller
 
 		Auth::logout();
 
-		$user->delete();
+		$user?->delete();
 
 		$request->session()->invalidate();
 		$request->session()->regenerateToken();
