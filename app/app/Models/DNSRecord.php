@@ -14,6 +14,9 @@ class DNSRecord extends Model
 	protected $fillable = ['domain_id', 'type', 'content', 'hostname'];
 
 	# get the domain for this dns record
+	/**
+	 * @return BelongsTo<Domain, DNSRecord>
+	 */
 	public function domain(): BelongsTo{
 		return $this->belongsTo(Domain::class);
 	}
