@@ -4,10 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\View\View;
-use App\Models\UserDomain;
 use App\Models\Domain;
-use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -19,7 +16,7 @@ class DashboardController extends Controller
 		$this->authorize('delete', $domain);
 		
 		# delete domain from user's list
-		$request->user()->domains()->detach($domain);
+		$request->user()?->domains()->detach($domain);
 
 		return redirect()->back()->with(['status' => 'domain-deleted', 'deletedDomain' => idn_to_utf8($domain->domain_name_ascii)]);
 	}
@@ -27,7 +24,7 @@ class DashboardController extends Controller
 	public function listDomains(Request $request): Response{
 		
 		# get user's domains
-		$domains = Domain::whereRelation('users', 'users.id', $request->user()->id)->get();
+		$domains = $request->user()?->domains()->get(['domains.id', 'domain_name_ascii']) ?? array();
 
 		# create a domain list, containing only the fields 'id' and 'name'
 		# encode punycode names to international domain name
@@ -41,8 +38,9 @@ class DashboardController extends Controller
 		}
 
 		# sort domain list by name ascending
+		$domainColumn = array_column($domainList, 'name');
 		array_multisort(
-			array_column($domainList, 'name'), SORT_ASC,
+			$domainColumn, SORT_ASC,
 			$domainList
 		);
 
