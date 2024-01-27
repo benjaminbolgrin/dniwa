@@ -12,11 +12,11 @@ class HtmlMetaData extends Model
 
 	protected $table = 'html_meta_data';
 	/**
-	 * @var array<string, string>
+	 * @var array<string, string> $attributes
 	 */
 	protected $attributes = ['meta_name' => '', 'meta_charset' => '', 'meta_http_equiv' => '', 'meta_content' => '', 'meta_property' => '', 'meta_itemprop' => ''];
 	/**
-	 * @var array<string>
+	 * @var array<int, string> $fillable
 	 */
 	protected $fillable = ['http_data_id', 'meta_name', 'meta_charset', 'meta_http_equiv', 'meta_content', 'meta_property', 'meta_itemprop'];
 

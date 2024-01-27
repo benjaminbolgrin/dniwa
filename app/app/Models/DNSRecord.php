@@ -11,6 +11,9 @@ class DNSRecord extends Model
 	use HasFactory;
 
 	protected $table = 'dns_records';
+	/**
+	 * @var array<int, string> $fillable
+	 */
 	protected $fillable = ['domain_id', 'type', 'content', 'hostname'];
 
 	# get the domain for this dns record

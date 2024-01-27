@@ -13,11 +13,11 @@ class HttpData extends Model
 
     	protected $table = 'http_data';
 	/**
-	 * @var array<string, string>
+	 * @var array<string, string> $attributes
 	 */
 	protected $attributes = ['title' => ''];
 	/**
-	 * @var array<string>
+	 * @var array<int, string> $fillable
 	 */
 	protected $fillable = ['domain_id', 'response_code', 'header', 'title', 'updated_at'];
 

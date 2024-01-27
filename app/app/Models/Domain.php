@@ -14,7 +14,7 @@ class Domain extends Model
 	use HasFactory;
 
 	/*
-	 * @var array<String>
+	 * @var array<int, string> $fillable
 	 */
 	protected $fillable = ['domain_name_ascii'];
 	
