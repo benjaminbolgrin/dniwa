@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PreferencesUpdateRequest;
-use App\Models\User;
 use App\Models\UserSetting;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -18,7 +17,7 @@ class PreferencesController extends Controller
 	*/
 	public function edit(Request $request): Response{
 
-		$userSetting = UserSetting::where('user_id', $request->user()->id)->first();
+		$userSetting = $request->user()?->userSettings()->get(['theme']);
 
 		return Inertia::render('PreferencesEdit', [
 			'userSetting' => $userSetting
@@ -31,7 +30,7 @@ class PreferencesController extends Controller
 	public function update(PreferencesUpdateRequest $request): RedirectResponse{
 
 		# get or create user's settings
-		$userSetting = UserSetting::firstOrCreate(['user_id' => $request->user()->id]);
+		$userSetting = UserSetting::firstOrCreate(['user_id' => $request->user()?->id]);
 
 		# save user's selected theme
 		$userSetting->theme = $request->validated()['theme'];
