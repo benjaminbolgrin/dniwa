@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Redirect;
 use App\Models\Domain;
 use App\Http\Requests\StoreHostnameRequest;
 use App\Jobs\UpdateCaches;
+use App\Jobs\UpdateCachesAsync;
 use Inertia\Inertia;
 use Inertia\Response;
 use App\Http\Resources\DomainResource;
@@ -52,7 +53,7 @@ class HostnameController extends Controller
 		$request->user()?->domains()->attach($domain);
 
 		# send an 'UpdateCache' job to the queue
-		UpdateCaches::dispatch($domain);
+		UpdateCachesAsync::dispatch($domain);
 		
 		return redirect()->back()->with(['status' => 'hostname-added', 'domain' => idn_to_utf8($domainName)]);
 	}
