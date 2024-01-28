@@ -16,7 +16,7 @@ class DomainResource extends JsonResource{
 		return [
 			'domainName' => idn_to_utf8($this->domain_name_ascii),
 			'dnsA' => $this->dnsRecordsA()->get(['content', 'hostname']),
-			'dnsMX' => $this->dnsRecordsMX()->get(['content, hostname']),
+			'dnsMX' => $this->dnsRecordsMX()->get(['content', 'hostname']),
 			'httpData' => $this->httpData()->first(['header', 'response_code', 'title']),
 			'htmlMetaData' => $this->htmlMetaData()->get(['meta_name', 'meta_content', 'meta_charset', 'meta_http_equiv', 'meta_property', 'meta_itemprop']),
 			'updateAge' => [

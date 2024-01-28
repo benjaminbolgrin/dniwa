@@ -46,9 +46,9 @@ class UpdateCache implements ShouldQueue
 	}
 
 	private function isHttpCacheFresh(): bool{
-		if($this->domain->httpRecords()->exists()){
+		if($this->domain->httpData()->exists()){
 			$timePassed = Date::now()->subMinutes($this->cacheMinutes);
-			if($this->domain->httpRecords()->first()->updated_at->gt($timePassed)){
+			if($this->domain->httpData()->first()->updated_at->gt($timePassed)){
 				return true;
 			}
 		}

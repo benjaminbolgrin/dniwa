@@ -4,19 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\View\View;
-use Illuminate\Support\Facades\Date;
 use App\Models\Domain;
-use App\Models\UserDomain;
-use App\Models\DNSRecord;
-use App\Models\HttpData;
-use App\Models\HtmlMetaData;
 use App\Http\Requests\StoreHostnameRequest;
 use App\Jobs\UpdateCache;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Http\Resources\DomainResource;
 
 class HostnameController extends Controller
 {
@@ -26,46 +20,9 @@ class HostnameController extends Controller
 
 		(new UpdateCache($domain))->handle();
 
-		# get cached dns 'A' records
-		$dnsA = $domain->dnsRecordsA()->get() ?? new DNSRecord();
-
-		# get cached dns 'MX' records
-		$dnsMX = $domain->dnsRecordsMX()->get() ?? new DNSRecord();
-		
-		# get cached http records
-		$httpData = $domain->httpRecords()->first() ?? new HttpData();
-
-		# get cached html meta data
-		$htmlData = $domain->htmlMetaData()->get() ?? new HtmlMetaData();;
-
-		# get current server time
-		$currentServerTime = Date::now()->timestamp;
-		
-		# get seconds since last updates or set to current server time
-		$updateTimeDNSA = $dnsA?->first()?->updated_at ? Date::createFromFormat('Y-m-d H:i:s', $dnsA->first()->updated_at)->timestamp : $currentServerTime;
-		$updateTimeDNSMX = $dnsMX?->first()?->updated_at ? Date::createFromFormat('Y-m-d H:i:s', $dnsMX->first()->updated_at)->timestamp : $currentServerTime;
-		$updateTimeHttp = $httpData?->updated_at ? Date::createFromFormat('Y-m-d H:i:s', $httpData->updated_at)->timestamp : $currentServerTime;
-		$updateTimeHtml = $htmlData?->first()?->updated_at ? Date::createFromFormat('Y-m-d H:i:s', $htmlData->first()->updated_at)->timestamp : $currentServerTime;
-
-		# calculate seconds since last updates
-		$updateAgeDNSA = $currentServerTime - $updateTimeDNSA;
-		$updateAgeDNSMX = $currentServerTime - $updateTimeDNSMX;
-		$updateAgeHttp = $currentServerTime - $updateTimeHttp;
-		$updateAgeHtml = $currentServerTime - $updateTimeHtml;
-
 		# render view
 		return Inertia::render('DomainInfo', [
-			'dnsA' => $dnsA,
-			'dnsMX' => $dnsMX,
-			'domainName' => idn_to_utf8($domain->domain_name_ascii),
-			'httpData' => $httpData,
-			'htmlData' => $htmlData,
-			'updateAge' => [
-				'a' => $updateAgeDNSA,
-				'mx' => $updateAgeDNSMX,
-				'http' => $updateAgeHttp,
-				'html' => $updateAgeHtml
-			]
+			'domainInfo' => new DomainResource($domain)
 		]);
 	}
 
@@ -77,10 +34,10 @@ class HostnameController extends Controller
 		$host = parse_url($url, PHP_URL_HOST);
 
 		# encode to punycode
-		$punycodeHostname = idn_to_ascii($host);
+		$punycodeHostname = is_string($host) ? idn_to_ascii($host) : '';
 
 		# get domain name
-		$domainName = $punycodeHostname;
+		$domainName = is_string($punycodeHostname) ? $punycodeHostname : '';
 		preg_match('/(?P<domainName>[a-z0-9][a-z0-9\-]{1,63}\.[a-z\.]{2,6})$/i', $domainName, $hostnameParts);
 		if(isset($hostnameParts['domainName'])){
 			$domainName = $hostnameParts['domainName'];
@@ -92,7 +49,7 @@ class HostnameController extends Controller
 		$domain = Domain::firstOrCreate(['domain_name_ascii' => $domainName]);
 
 		# associate the user with the domain name
-		$request->user()->domains()->attach($domain);
+		$request->user()?->domains()->attach($domain);
 
 		# send an 'UpdateCache' job to the queue
 		UpdateCache::dispatch($domain);

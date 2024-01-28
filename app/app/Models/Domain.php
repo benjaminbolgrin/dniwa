@@ -54,7 +54,7 @@ class Domain extends Model
 	/**
 	 * @return HasOne<HttpData>
 	 */
-	public function httpRecords(): HasOne{
+	public function httpData(): HasOne{
 		return $this->hasOne(HttpData::class);
 	}
 
