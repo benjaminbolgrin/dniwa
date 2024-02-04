@@ -49,8 +49,28 @@ onMounted(() => {
 	</nav>
 	<!-- End navigation bar -->
 	<!-- Start content -->
-	<div class="container-md">
-		<slot />
-	</div>
+	<Transition name="page-transition" appear mode="out-in">
+		<div class="container-md">
+			<slot />
+		</div>
+	</Transition>
 	<!-- End content -->
 </template>
+
+<style>
+.page-transition-move,
+.page-transition-enter-active,
+.page-transition-leave-active{
+	transition: all 0.25s ease;
+}
+
+.page-transition-enter-from,
+.page-transition-leave-to{
+	opacity: 0;
+	transform: translateY(-50px);
+}
+
+.page-transition-leave-active{
+	position:absolute;
+}
+</style>
