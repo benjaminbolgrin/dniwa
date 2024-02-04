@@ -6,6 +6,10 @@ import AddDomainForm from '@/Components/DniwaAddDomain.vue';
 import { useForm } from '@inertiajs/vue3'; 
 import { ref } from 'vue';
 
+let props = defineProps({
+	'domains': Object
+});
+
 let addDomainSuccess = ref(false);
 let addedUrl = ref('');
 
@@ -24,6 +28,6 @@ const headlineMain = 'Dashboard';
 			</div>
 		</div>
 		<hr class="mt-0"/>
-		<DniwaDashboardDomains :addDomainSuccess="addDomainSuccess" :addedUrl="addedUrl"/>
+		<DniwaDashboardDomains :addDomainSuccess="addDomainSuccess" :addedUrl="addedUrl" :domains="props.domains"/>
 	</MainLayout>
 </template>

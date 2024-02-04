@@ -36,14 +36,6 @@ class DashboardController extends Controller
 			];
 			$domainList[] = $domainArray;
 		}
-
-		# sort domain list by name ascending
-		$domainColumn = array_column($domainList, 'name');
-		array_multisort(
-			$domainColumn, SORT_ASC,
-			$domainList
-		);
-
 		return Inertia::render('Dashboard', ['domains' => $domainList]);
 	}
 }
