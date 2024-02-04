@@ -1,6 +1,7 @@
 <script setup>
 import {useForm, Link} from '@inertiajs/vue3';
 import {ref, computed, watch, toRef} from 'vue';
+import DniwaMessageTransition from '@/Components/DniwaMessageTransition.vue';
 
 let props = defineProps({
 	'addDomainSuccess': String,
@@ -73,8 +74,9 @@ watch(copyAddedUrl, () => {
 
 	</div>
 	<!-- Status message -->
-	<div v-if="statusMessage.message != ''" :class="statusMessage.type == 'delete' ? 'alert alert-info' : 'alert alert-success'" v-text="statusMessage.message"/>
-		
+	<DniwaMessageTransition>
+		<div v-if="statusMessage.message != ''" :class="statusMessage.type == 'delete' ? 'alert alert-info' : 'alert alert-success'" v-text="statusMessage.message" :key="statusMessage.message"/>
+	</DniwaMessageTransition>	
 	<!-- Domain list -->
 	<TransitionGroup>
 		<div v-for="domain in filteredDomains" :key="domain.name">
