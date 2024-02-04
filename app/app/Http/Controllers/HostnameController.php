@@ -49,6 +49,11 @@ class HostnameController extends Controller
 		# create or retrieve the domain name data from the database
 		$domain = Domain::firstOrCreate(['domain_name_ascii' => $domainName]);
 
+		# check, if domain is already on user's list
+		if($domain->users()->where('users.id', $request->user()?->id)->exists()){
+			return redirect()->back()->withInput(['hostname'])->withErrors(['hostname' => 'This domain is already on your list' ]);
+		}
+
 		# associate the user with the domain name
 		$request->user()?->domains()->attach($domain);
 

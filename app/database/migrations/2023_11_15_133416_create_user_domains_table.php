@@ -14,6 +14,7 @@ return new class extends Migration{
 			$table->id();
 			$table->unsignedBigInteger('user_id');
 			$table->unsignedBigInteger('domain_id');
+			$table->unique(['user_id', 'domain_id']);
 			$table->timestamps();
 			$table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
 			$table->foreign('domain_id')->references('id')->on('domains')->cascadeOnDelete();
