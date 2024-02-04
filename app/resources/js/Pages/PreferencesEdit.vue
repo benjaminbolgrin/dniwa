@@ -3,6 +3,7 @@ import MainLayout from '@/Layout/MainLayout.vue';
 import DniwaHead from '@/Components/DniwaHead.vue';
 import {ref, watchEffect} from 'vue';
 import {useForm} from '@inertiajs/vue3';
+import DniwaMessageTransition from '@/Components/DniwaMessageTransition.vue';
 
 let props = defineProps({
 	auth: Object
@@ -46,8 +47,10 @@ watchEffect(() => {
 		<hr class="mt-0"/>
 		<section>
 			<!-- Success message -->
-			<div v-if="themeSuccess" class="alert alert-success" v-text="'Theme preference has been saved.'"/>
-			
+			<DniwaMessageTransition>
+				<div v-if="themeSuccess" class="alert alert-success" v-text="'Theme preference has been saved.'" :key="formTheme.theme"/>
+			</DniwaMessageTransition>
+
 			<!-- Theme selection -->
 			<div class="p-2 mb-4 bg-secondary-subtle border border-secondary-subtle">
 				<header>
