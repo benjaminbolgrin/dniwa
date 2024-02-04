@@ -1,7 +1,9 @@
 <script setup>
 import MainLayout from '@/Layout/MainLayout.vue';
 import DniwaHead from '@/Components/DniwaHead.vue';
+import {ref} from 'vue';
 import {useForm} from '@inertiajs/vue3';
+import DniwaMessageTransition from '@/Components/DniwaMessageTransition.vue'
 
 const headlineMain = 'Account settings';
 const headlineProfileInfo = 'Profile information';
@@ -21,6 +23,9 @@ let props = defineProps({
 	status: String
 });
 
+const submitProfileToggle = ref(false);
+const submitPasswordToggle = ref(false);
+
 let formProfile = useForm({
 	name: props.userName,
 	email: props.userEmail,
@@ -32,14 +37,17 @@ let formPassword = useForm({
 	password_confirmation: ''
 });
 
-let submitProfile = () =>{
-	formProfile.patch('/profile');
+let submitProfile = ()=>{
+	formProfile.patch('/profile',{
+	onSuccess: () => {
+		submitProfileToggle.value = !submitProfileToggle.value;}});
 };
 
 
 let submitPassword = () =>{
 	formPassword.put('/password', {
 		onSuccess: () => {
+			submitPasswordToggle.value = !submitPasswordToggle.value;
 			props.status = 'password-updated';
 			formPassword.reset();
 		}
@@ -56,8 +64,10 @@ let submitPassword = () =>{
 		<hr class="mt-0"/>
 		<section>
 			<!-- Success messages -->
-			<div v-if="props.status == 'profile-updated'" class="alert alert-success" v-text="'Profile information updated successfully!'"/>
-			<div v-else-if="props.status == 'password-updated'" class="alert alert-success" v-text="'Password updated successfully!'"/>
+			<DniwaMessageTransition>	
+				<div v-if="props.status == 'profile-updated'" class="alert alert-success" v-text="'Profile information updated successfully!'" :key="submitProfileToggle"/>
+				<div v-else-if="props.status == 'password-updated'" class="alert alert-success" v-text="'Password updated successfully!'" :key="submitPasswordToggle"/>
+			</DniwaMessageTransition>
 			
 			<!-- Profile form -->
 			<div class="p-2 mb-4 bg-secondary-subtle border border-secondary-subtle">
