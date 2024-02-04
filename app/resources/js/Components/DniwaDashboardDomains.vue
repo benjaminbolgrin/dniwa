@@ -76,12 +76,38 @@ watch(copyAddedUrl, () => {
 	<div v-if="statusMessage.message != ''" :class="statusMessage.type == 'delete' ? 'alert alert-info' : 'alert alert-success'" v-text="statusMessage.message"/>
 		
 	<!-- Domain list -->
-	<div v-for="domain in filteredDomains">
-		<form @submit.prevent="submit(domain)" id="form-domain-delete" class="mb-2">
-			<div class="btn-group d-flex w-100">
-				<Link :href="'/hostname/' + domain.id" class="btn btn-outline-primary w-75" :class="formDomainDelete.processing ? 'disabled' : ''" v-text="domain.name" @click="domainDisabled = true"/>
-				<button type="submit" class="btn btn-outline-danger w-25" v-text="submitButton" :disabled="formDomainDelete.processing"/>
-			</div>
-		</form>
-	</div>
+	<TransitionGroup>
+		<div v-for="domain in filteredDomains" :key="domain.name">
+			<form @submit.prevent="submit(domain)" id="form-domain-delete" class="mb-2">
+				<div class="btn-group d-flex w-100">
+					<Link :href="'/hostname/' + domain.id" class="btn btn-outline-primary w-75" :class="formDomainDelete.processing ? 'disabled' : ''" v-text="domain.name" @click="domainDisabled = true"/>
+					<button type="submit" class="btn btn-outline-danger w-25" v-text="submitButton" :disabled="formDomainDelete.processing"/>
+				</div>
+			</form>
+		</div>
+	</TransitionGroup>
 </template>
+<style>
+.v-move,
+.v-enter-active{
+	transition: all 0.5s ease;
+}
+
+.v-enter-from{
+	opacity: 0;
+	transform: translateX(-30px);
+}
+
+.v-enter-to{
+	opacity: 1;
+}
+
+.v-leave-to{
+	opacity: 0;
+}
+
+.v-leave-active{
+	position: absolute;
+	transition: all 0s;
+}
+</style>
