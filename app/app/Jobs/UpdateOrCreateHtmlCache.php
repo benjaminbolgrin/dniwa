@@ -28,7 +28,7 @@ class UpdateOrCreateHtmlCache implements ShouldQueue
 	}
 
 	private function isHtmlCacheFresh(): bool{
-		return $this->domain->htmlMetaData()->first()?->updated_at?->gt(Date::now()->subMinutes($this->cacheMinutes)) ?? false;
+		return $this->domain->httpData()->first()?->htmlMetaData()->first()?->updated_at?->gt(Date::now()->subMinutes($this->cacheMinutes)) ?? false;
 	}
 
 	/** @return array<int, array<string, int|string|null>> */
